@@ -1,5 +1,5 @@
 class Platform < Solid
-  def initialize(x, y, w, h,target_x,target_y,speed, color)
+  def initialize(x, y, w, h,target_x,target_y,speed, drawable)
     @start_x = x
     @start_y = y
     @target_x = target_x
@@ -7,7 +7,7 @@ class Platform < Solid
     @speed = speed
     @last_x = @start_x
     @last_y = @start_y
-    super(x, y, w, h, color)
+    super(x, y, w, h, drawable)
   end
 
   def move_platform(args)

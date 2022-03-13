@@ -1,12 +1,15 @@
-require 'app/rect.rb'
-
 class Actor < Rect
-  def initialize(x, y, w, h, color)
-    super(x, y, w, h, color)
+  def initialize(x, y, w, h, drawable)
+    super(x, y, w, h)
     @x_remainder = 0
     @y_remainder = 0
     @is_riding = false
+    @drawable = drawable
     Level.instance.add_actor(self)
+  end
+
+  def draw(args)
+    @drawable.draw(args, @x, @y)
   end
 
   def simulate(args)
@@ -17,7 +20,7 @@ class Actor < Rect
   def check_collision(plus_x, plus_y, ignore = nil)
     Level.instance.solids.each do |solid|
       next if solid == ignore
-      if Rect.check_overlap(Rect.new(@x + plus_x, @y + plus_y, @w, @h, Color::WHITE),solid)
+      if Rect.check_overlap(Rect.new(@x + plus_x, @y + plus_y, @w, @h),solid)
         return true
       end
     end
@@ -65,12 +68,47 @@ class Actor < Rect
   end
 
   def check_riding
+    solid = solid_below?
+    unless solid.nil?
+      solid.add_rider(self)
+      @is_riding = true
+    end
+  end
+
+  def solid_below?
     Level.instance.solids.each do |solid|
-      if Rect.check_overlap(Rect.new(@x, @y - 1, @w, @h, Color::WHITE),solid)
-        solid.add_rider(self)
-        @is_riding = true
+      if Rect.check_overlap(Rect.new(@x, @y - 1, @w, @h),solid)
+        return solid
       end
     end
+    return nil
+  end
+
+  def solid_above?
+    Level.instance.solids.each do |solid|
+      if Rect.check_overlap(Rect.new(@x, @y + 1, @w, @h),solid)
+        return solid
+      end
+    end
+    return nil
+  end
+
+  def solid_right?
+    Level.instance.solids.each do |solid|
+      if Rect.check_overlap(Rect.new(@x + 1, @y, @w, @h), solid)
+        return solid
+      end
+    end
+    return nil
+  end
+
+  def solid_left?
+    Level.instance.solids.each do |solid|
+      if Rect.check_overlap(Rect.new(@x - 1, @y, @w, @h), solid)
+        return solid
+      end
+    end
+    return nil
   end
 
   def on_collision_x
@@ -79,6 +117,14 @@ class Actor < Rect
 
   def on_collision_y
 
+  end
+
+  def destroy
+    Level.instance.remove_actor(self)
+  end
+
+  def debug_draw(args)
+    super(args, Color::GREEN)
   end
 
 end

@@ -1,14 +1,17 @@
-require 'app/rect.rb'
-
 class Solid < Rect
 
-  def initialize(x, y, w, h, color)
-    super(x, y, w, h, color)
+  def initialize(x, y, w, h, drawable)
+    super(x, y, w, h)
     @x_remainder = 0
     @y_remainder = 0
     @collidable = true
     @riders = []
+    @drawable = drawable
     Level.instance.add_solid(self)
+  end
+
+  def draw(args)
+    @drawable.draw(args, @x, @y)
   end
 
   def simulate(args)
@@ -81,6 +84,14 @@ class Solid < Rect
     end
 
     @collidable = true
+  end
+
+  def destroy
+    Level.instance.remove_solid(self)
+  end
+
+  def debug_draw(args)
+    super(args, Color::RED)
   end
 
 end
