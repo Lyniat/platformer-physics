@@ -41,7 +41,7 @@ class Player < Actor
     dir_x = at_x - mid_x
     dir_y = at_y - mid_y
 
-    highest = dir_x > dir_y ? dir_x : dir_y
+    highest = dir_x.abs > dir_y.abs ? dir_x.abs : dir_y.abs
 
     dir_x /= highest
     dir_y /= highest
