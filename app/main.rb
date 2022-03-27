@@ -18,7 +18,7 @@ WIDTH = 1280
 HEIGHT = 720
 
 def init args
-  @player = Player.new(0,0,100,100)
+  @player = Player.new(0,0,50,50 * 2)
   Solid.new(0,-100,WIDTH,100,Box.new(WIDTH,100,Color::RED))
   Solid.new(0,150,100,100,Box.new(100,100,Color::YELLOW))
   Solid.new(200,400,100,100,Box.new(100,100,Color::YELLOW))

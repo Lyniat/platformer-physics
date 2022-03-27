@@ -1,13 +1,13 @@
 class Arrow < Projectile
 
-  SIZE = 50
+  SIZE = 10
   ANGLE_OFFSET = -45
   INITIAL_SPEED = 15
   LIFE_TIME = 3 * 60
 
   def initialize(x, y, x_speed, y_speed)
-    @drawable = Sprite.new(SIZE,SIZE, '/sprites/arrow_flame.png', 0, 8, 8)
-    super(x, y, x_speed * INITIAL_SPEED, y_speed * INITIAL_SPEED,SIZE, SIZE, @drawable)
+    @drawable = Sprite.new(SIZE,SIZE, '/sprites/arrow_flame.png', 0, 8, 8, 5, 5)
+    super(x, y, x_speed * INITIAL_SPEED, y_speed * INITIAL_SPEED, SIZE, SIZE, @drawable)
     @has_hit = false
     @last_angle = 0
     @life_time = LIFE_TIME
@@ -25,6 +25,10 @@ class Arrow < Projectile
       degrees = (degrees + 360 + ANGLE_OFFSET) % 360
 
       @drawable.angle = degrees
+      sin = Math.sin(angle)
+      cos = Math.cos(angle)
+      @drawable.offset_x = -25 - cos * 25
+      @drawable.offset_y = -25 - sin * 25
       @last_angle = degrees
     end
   end

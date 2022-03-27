@@ -5,8 +5,8 @@ class Player < Actor
   JUMP_VELOCITY = 13
 
   def initialize(x, y, w, h)
-    @anm_run = Animation.new(w,h,3, 0.1, '/sprites/panda_sheet.png', 0, 19, 16)
-    @anm_climb = Animation.new(w,h,3, 0.1, '/sprites/panda_sheet.png', 3, 19, 16)
+    @anm_run = Animation.new(w, h, 3, 0.1, '/sprites/panda_sheet.png', 0, 12, 16, 1.333)
+    @anm_climb = Animation.new(w, h, 3, 0.1, '/sprites/panda_sheet.png', 3, 12, 16, 1.333)
     super(x, y, w, h, @anm_run)
     @y_speed = 0
     @x_speed = 0
@@ -46,7 +46,7 @@ class Player < Actor
     dir_x /= highest
     dir_y /= highest
 
-    Arrow.new(mid_x, mid_y,dir_x,dir_y)
+    Arrow.new(mid_x, mid_y, dir_x, dir_y)
   end
 
   def climb
