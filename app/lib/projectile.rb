@@ -37,11 +37,13 @@ class Projectile < Actor
     @y_speed = 0
   end
 
-  def on_collision_x
+  def on_collision_x(squish)
+    destroy if squish
     on_hit
   end
 
-  def on_collision_y
+  def on_collision_y(squish)
+    destroy if squish
     on_hit
   end
 end

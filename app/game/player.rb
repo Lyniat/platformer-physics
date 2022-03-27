@@ -103,7 +103,14 @@ class Player < Actor
     super
   end
 
-  def on_collision_y
+  def on_collision_y(squish)
+    destroy if squish
+    @y_speed = 0
+    super
+  end
+
+  def on_collision_x(squish)
+    destroy if squish
     @y_speed = 0
     super
   end

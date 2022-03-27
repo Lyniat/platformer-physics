@@ -41,7 +41,7 @@ class Actor < Rect
         @x += sign
         move -= sign
       else
-        on_collision_x
+        on_collision_x(ignore != nil)
         break
       end
     end
@@ -61,7 +61,7 @@ class Actor < Rect
         @y += sign
         move -= sign
       else
-        on_collision_y
+        on_collision_y(ignore != nil)
         break
       end
     end
@@ -111,11 +111,11 @@ class Actor < Rect
     return nil
   end
 
-  def on_collision_x
+  def on_collision_x(squish)
 
   end
 
-  def on_collision_y
+  def on_collision_y(squish)
 
   end
 

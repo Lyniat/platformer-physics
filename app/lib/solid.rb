@@ -4,7 +4,6 @@ class Solid < Rect
     super(x, y, w, h)
     @x_remainder = 0
     @y_remainder = 0
-    @collidable = true
     @riders = []
     @drawable = drawable
     Level.instance.add_solid(self)
@@ -82,8 +81,6 @@ class Solid < Rect
         end
       end
     end
-
-    @collidable = true
   end
 
   def destroy
