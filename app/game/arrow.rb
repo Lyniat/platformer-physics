@@ -6,7 +6,7 @@ class Arrow < Projectile
   LIFE_TIME = 3 * 60
 
   def initialize(x, y, x_speed, y_speed)
-    @drawable = Sprite.new(SIZE,SIZE, '/sprites/arrow_flame.png', 0, 8, 8, 5, 5)
+    @drawable = Sprite.new(SIZE,SIZE, '/sprites/arrow_flame.png', 0, 16, 16, 5, 5)
     super(x, y, x_speed * INITIAL_SPEED, y_speed * INITIAL_SPEED, SIZE, SIZE, @drawable)
     @has_hit = false
     @last_angle = 0

@@ -1,5 +1,5 @@
 class Player < Actor
-  GRAVITY = -16 / 60
+  GRAVITY = -30 / 60
   SPEED = 3
   CLIMBING_SPEED = 1.5
   JUMP_VELOCITY = 13
