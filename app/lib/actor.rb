@@ -76,39 +76,19 @@ class Actor < Rect
   end
 
   def solid_below?
-    Level.instance.solids.each do |solid|
-      if Rect.check_overlap(Rect.new(@x, @y - 1, @w, @h),solid)
-        return solid
-      end
-    end
-    return nil
+    Level.instance.solids.find { |solid| Rect.check_overlap(Rect.new(@x, @y - 1, @w, @h), solid) }
   end
 
   def solid_above?
-    Level.instance.solids.each do |solid|
-      if Rect.check_overlap(Rect.new(@x, @y + 1, @w, @h),solid)
-        return solid
-      end
-    end
-    return nil
+    Level.instance.solids.find { |solid| Rect.check_overlap(Rect.new(@x, @y + 1, @w, @h), solid) }
   end
 
   def solid_right?
-    Level.instance.solids.each do |solid|
-      if Rect.check_overlap(Rect.new(@x + 1, @y, @w, @h), solid)
-        return solid
-      end
-    end
-    return nil
+    Level.instance.solids.find { |solid| Rect.check_overlap(Rect.new(@x + 1, @y, @w, @h), solid) }
   end
 
   def solid_left?
-    Level.instance.solids.each do |solid|
-      if Rect.check_overlap(Rect.new(@x - 1, @y, @w, @h), solid)
-        return solid
-      end
-    end
-    return nil
+    Level.instance.solids.find { |solid| Rect.check_overlap(Rect.new(@x - 1, @y, @w, @h), solid) }
   end
 
   def on_collision_x(squish)
