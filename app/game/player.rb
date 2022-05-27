@@ -4,6 +4,8 @@ class Player < Actor
   CLIMBING_SPEED = 1.5
   JUMP_VELOCITY = 13
 
+  attr_reader :dead
+
   def initialize(x, y, w, h)
     @anm_run = Animation.new(w, h, 3, 0.1, '/sprites/panda_sheet.png', 0, 12, 16, 1.333)
     @anm_climb = Animation.new(w, h, 3, 0.1, '/sprites/panda_sheet.png', 3, 12, 16, 1.333)
@@ -12,6 +14,7 @@ class Player < Actor
     @x_speed = 0
     @facing_right = true
     @is_climbing = false
+    @dead = false
   end
 
   def move_left
@@ -62,7 +65,7 @@ class Player < Actor
     end
   end
 
-  def simulate(args)
+  def simulate(tick_count)
     if @is_climbing
       @drawable = @anm_climb
     else
@@ -91,26 +94,32 @@ class Player < Actor
       @drawable.active = @x_speed != 0 || (@is_climbing && @y_speed != 0)
     end
 
-    super(args)
+    super(tick_count)
 
     @x_speed = 0
     @is_riding = false
 
   end
 
-  def draw(args)
+  def draw(tick_count)
     @is_climbing = false
     super
   end
 
   def on_collision_y(squish)
-    destroy if squish
+    if squish
+      @dead = true
+      destroy
+    end
     @y_speed = 0
     super
   end
 
   def on_collision_x(squish)
-    destroy if squish
+    if squish
+      @dead = true
+      destroy
+    end
     @y_speed = 0
     super
   end

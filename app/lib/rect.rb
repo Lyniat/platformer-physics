@@ -37,17 +37,17 @@ class Rect
     rect1.x < rect2.x + rect2.w && rect1.x + rect1.w > rect2.x && rect1.y < rect2.y + rect2.h && rect1.h + rect1.y > rect2.y
   end
 
-  def debug_draw(args, color)
+  def debug_draw(tick_count, color)
     camera = Level.instance.camera
     cam_x = camera.nil? ? 0 : camera.x
     cam_y = camera.nil? ? 0 : camera.y
-    args.outputs.lines  << [@x - cam_x, @y - cam_y, @x - cam_x, @y - cam_y + @h, color.r, color.g, color.b, color.a]
-    args.outputs.lines  << [@x - cam_x + @w, @y - cam_y, @x - cam_x + @w, @y - cam_y + @h, color.r, color.g, color.b, color.a]
+    $args.outputs.lines  << [@x - cam_x, @y - cam_y, @x - cam_x, @y - cam_y + @h, color.r, color.g, color.b, color.a]
+    $args.outputs.lines  << [@x - cam_x + @w, @y - cam_y, @x - cam_x + @w, @y - cam_y + @h, color.r, color.g, color.b, color.a]
 
-    args.outputs.lines  << [@x - cam_x, @y - cam_y, @x - cam_x + @w, @y - cam_y, color.r, color.g, color.b, color.a]
-    args.outputs.lines  << [@x - cam_x, @y - cam_y + @h, @x - cam_x + @w, @y - cam_y + @h, color.r, color.g, color.b, color.a]
+    $args.outputs.lines  << [@x - cam_x, @y - cam_y, @x - cam_x + @w, @y - cam_y, color.r, color.g, color.b, color.a]
+    $args.outputs.lines  << [@x - cam_x, @y - cam_y + @h, @x - cam_x + @w, @y - cam_y + @h, color.r, color.g, color.b, color.a]
 
-    args.outputs.lines  << [@x - cam_x, @y - cam_y, @x - cam_x + @w, @y - cam_y + @h, color.r, color.g, color.b, color.a]
-    args.outputs.lines  << [@x - cam_x + @w, @y - cam_y, @x - cam_x, @y - cam_y + @h, color.r, color.g, color.b, color.a]
+    $args.outputs.lines  << [@x - cam_x, @y - cam_y, @x - cam_x + @w, @y - cam_y + @h, color.r, color.g, color.b, color.a]
+    $args.outputs.lines  << [@x - cam_x + @w, @y - cam_y, @x - cam_x, @y - cam_y + @h, color.r, color.g, color.b, color.a]
   end
 end

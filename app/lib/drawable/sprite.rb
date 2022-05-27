@@ -15,8 +15,8 @@ class Sprite < Drawable
     @angle = 0
   end
 
-  def draw(args,x, y)
-    args.outputs.sprites << {
+  def draw(tick_count,x, y)
+    $args.outputs.sprites << {
       x: x - cam_x - @scale_x / 2 + offset_x,
       y: y - cam_y + offset_y,
       w: @w * @scale_x,
@@ -27,6 +27,6 @@ class Sprite < Drawable
       source_w: @spr_w,
       source_h: @spr_h,
       flip_horizontally: @flip,
-      angle: @angle}
+      angle: @angle }
   end
 end

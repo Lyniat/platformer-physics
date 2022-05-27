@@ -4,8 +4,8 @@ class Box < Drawable
     super(w,h)
   end
 
-  def draw(args, x, y)
-    args.outputs.solids << [x - cam_x, y - cam_y, @w, @h, @color.r, @color.g, @color.b, @color.a]
-    super(args)
+  def draw(tick_count, x, y)
+    $args.outputs.solids << [x - cam_x, y - cam_y, @w, @h, @color.r, @color.g, @color.b, @color.a]
+    super(tick_count)
   end
 end

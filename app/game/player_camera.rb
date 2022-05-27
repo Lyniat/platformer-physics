@@ -2,9 +2,9 @@ class PlayerCamera < Camera
 
   FREE_SPACE = 100
 
-  def initialize(args, player)
+  def initialize(tick_count, player)
     @player = player
-    super(args, player.x, player.y)
+    super(tick_count, player.x, player.y)
   end
 
   def update

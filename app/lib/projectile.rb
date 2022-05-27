@@ -9,7 +9,7 @@ class Projectile < Actor
     @y_speed = y_speed
   end
 
-  def simulate(args)
+  def simulate(tick_count)
     @y_speed += GRAVITY unless @is_riding
     move_x(@x_speed)
     move_y(@y_speed)

@@ -9,11 +9,11 @@ class Solid < Rect
     Level.instance.add_solid(self)
   end
 
-  def draw(args)
-    @drawable.draw(args, @x, @y)
+  def draw(tick_count)
+    @drawable.draw(tick_count, @x, @y)
   end
 
-  def simulate(args)
+  def simulate(tick_count)
     @riders.clear
   end
 
@@ -87,8 +87,8 @@ class Solid < Rect
     Level.instance.remove_solid(self)
   end
 
-  def debug_draw(args)
-    super(args, Color::RED)
+  def debug_draw(tick_count)
+    super(tick_count, Color::RED)
   end
 
 end

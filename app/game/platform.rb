@@ -8,7 +8,7 @@ class Platform < Solid
     super(x, y, w, h, drawable)
   end
 
-  def calculate_platform(args)
+  def calculate_platform(tick_count)
 
   end
 
@@ -18,16 +18,16 @@ class Platform < Solid
     @last_y = y
   end
 
-  def get_progress(args)
-    (Math.sin(args.state.tick_count * @speed) + 1) / 2
+  def get_progress(tick_count)
+    (Math.sin(tick_count * @speed) + 1) / 2
   end
 
   def mix(x, y, a)
     x * (1 - a) + y * a
   end
 
-  def simulate(args)
-    calculate_platform(args)
-    super(args)
+  def simulate(tick_count)
+    calculate_platform(tick_count)
+    super(tick_count)
   end
 end

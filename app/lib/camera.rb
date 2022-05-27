@@ -3,18 +3,17 @@ class Camera
 
   WIDTH = 1280
   HEIGHT = 720
-  def initialize(args,x, y)
-    @args = args
+  def initialize(tick_count, x, y)
     @x = x
     @y = y
   end
 
   def mouse_x
-    @args.inputs.mouse.x + @x
+    $args.inputs.mouse.x + @x
   end
 
   def mouse_y
-    @args.inputs.mouse.y + @y
+    $args.inputs.mouse.y + @y
   end
 
   def update

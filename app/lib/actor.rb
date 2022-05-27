@@ -8,11 +8,11 @@ class Actor < Rect
     Level.instance.add_actor(self)
   end
 
-  def draw(args)
-    @drawable.draw(args, @x, @y)
+  def draw(tick_count)
+    @drawable.draw(tick_count, @x, @y)
   end
 
-  def simulate(args)
+  def simulate(tick_count)
     @is_riding = false
     check_riding
   end
@@ -103,8 +103,8 @@ class Actor < Rect
     Level.instance.remove_actor(self)
   end
 
-  def debug_draw(args)
-    super(args, Color::GREEN)
+  def debug_draw(tick_count)
+    super(tick_count, Color::GREEN)
   end
 
 end

@@ -13,8 +13,8 @@ class Arrow < Projectile
     @life_time = LIFE_TIME
   end
 
-  def simulate(args)
-    super(args)
+  def simulate(tick_count)
+    super(tick_count)
 
     if @has_hit
       @life_time -= 1
