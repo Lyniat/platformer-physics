@@ -21,8 +21,8 @@ WIDTH = 1280
 HEIGHT = 720
 
 def init args
-  @player = Player.new(0, 0, 50, 50 * 2)
   init_objects
+  @player = Player.new(0, 0, 50, 50 * 2)
   @camera = PlayerCamera.new(args, @player)
   Level.instance.set_camera(@camera)
   @show_debug = false

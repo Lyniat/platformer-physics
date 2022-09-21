@@ -1,0 +1,11 @@
+devid=lyniat
+devtitle=lyniat
+gameid=platformer-physics
+gametitle=Platformer Physics
+version=0.1
+
+# Uncomment the entry below to bytecode compile your Ruby code (Pro License Only)
+compile_ruby=true
+
+# Uncomment the entry below to specify the package name for your APK (Pro License Only)
+#packageid=org.dev.gamename
