@@ -28,7 +28,7 @@ class Actor < Rect
     end
 
     Level.instance.maps.find do |map|
-      solids = map.get_solids_at(@x, @y)
+      solids = map.get_solids_at(@x, @y, plus_x, plus_y)
       solids.each do |solid|
         return true if Rect.check_overlap({x: @x + plus_x, y: @y + plus_y, w: @w, h: @h}, solid)
       end
@@ -91,7 +91,7 @@ class Actor < Rect
     end
 
     Level.instance.maps.find do |map|
-      solids = map.get_solids_at(@x, @y)
+      solids = map.get_solids_at(@x, @y, 0, -1)
       solids.find do |solid|
         return map if Rect.check_overlap({x: @x, y: @y - 1, w: @w, h: @h}, solid)
       end
@@ -106,7 +106,7 @@ class Actor < Rect
     end
 
     Level.instance.maps.find do |map|
-      solids = map.get_solids_at(@x, @y)
+      solids = map.get_solids_at(@x, @y, 0, 1)
       solids.find do |solid|
         return map if Rect.check_overlap({x: @x, y: @y + 1, w: @w, h: @h}, solid)
       end
@@ -121,7 +121,7 @@ class Actor < Rect
     end
 
     Level.instance.maps.find do |map|
-      solids = map.get_solids_at(@x, @y)
+      solids = map.get_solids_at(@x, @y, 1, 0)
       solids.find do |solid|
         return map if Rect.check_overlap({x: @x + 1, y: @y, w: @w, h: @h}, solid)
       end
@@ -136,7 +136,7 @@ class Actor < Rect
     end
 
     Level.instance.maps.find do |map|
-      solids = map.get_solids_at(@x, @y)
+      solids = map.get_solids_at(@x, @y, -1, 0)
       solids.find do |solid|
         return map if Rect.check_overlap({x: @x - 1, y: @y, w: @w, h: @h}, solid)
       end

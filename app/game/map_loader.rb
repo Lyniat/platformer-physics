@@ -17,6 +17,8 @@ class MapLoader
     infos = $args.gtk.parse_json_file(@information)
     passable_information = infos["passable"]
 
+    jump_through_information = infos["jump_through"]
+
     new_passable = []
     i = 0
     while i < passable_information.length
@@ -28,8 +30,20 @@ class MapLoader
       i += 1
     end
 
+    new_jump_through = []
+    i = 0
+    while i < jump_through_information.length
+      original_jump_through = jump_through_information[i]
+      original_j_x = original_jump_through % @atlas_width
+      original_j_y = (original_jump_through / @atlas_width).floor
+      new_j_y = @atlas_height - 1 - original_j_y
+      new_jump_through << original_j_x + new_j_y * @atlas_width
+      i += 1
+    end
+
     new_infos = {}
     new_infos["passable"] = new_passable
+    new_infos["jump_through"] = new_jump_through
 
     data = $args.gtk.read_file(@data)
     data_array = []
