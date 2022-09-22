@@ -71,6 +71,7 @@ class Player < Actor
 
   def simulate(tick_count)
     @bow_cooldown -= 1
+
     if @is_climbing
       @drawable = @anm_climb
     else
@@ -125,7 +126,6 @@ class Player < Actor
       @dead = true
       destroy
     end
-    @y_speed = 0
     super
   end
 end
