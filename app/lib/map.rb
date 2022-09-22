@@ -68,10 +68,10 @@ class Map
     _x = (x / (@tile_size * @scale)).floor
     _y = (y / (@tile_size * @scale)).floor
 
-    i = 0
-    while i <= 2
-      j = 0
-      while j <= 2
+    i = -1
+    while i < 3
+      j = -1
+      while j < 3
         s = @solids[(_y + i) * @width + _x + j]
         solids << s unless s.nil?
         j += 1

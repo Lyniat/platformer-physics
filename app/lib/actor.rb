@@ -29,7 +29,7 @@ class Actor < Rect
 
     Level.instance.maps.find do |map|
       solids = map.get_solids_at(@x, @y)
-      solids.find do |solid|
+      solids.each do |solid|
         return true if Rect.check_overlap({x: @x + plus_x, y: @y + plus_y, w: @w, h: @h}, solid)
       end
     end
