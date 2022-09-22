@@ -25,10 +25,10 @@ HEIGHT = 720
 
 def init args
   init_objects
-  @player = Player.new(0, 250, 64, 64 * 2)
+  @player = Player.new(0, 250, 50, 50 * 2)
   @camera = PlayerCamera.new(args, @player)
   Level.instance.set_camera(@camera)
-  Level.instance.enable_performance_check(300)
+  Level.instance.enable_performance_check(750) # lower number might increase performance but also can cause bugs
   @show_debug = false
   @paused = false
   @resetting = false
