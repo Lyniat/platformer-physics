@@ -1,8 +1,9 @@
 class Player < Actor
-  GRAVITY = -30 / 60
+  GRAVITY = -50 / 60
   SPEED = 3
   CLIMBING_SPEED = 1.5
-  JUMP_VELOCITY = 13
+  JUMP_VELOCITY = 20
+  BOW_COOLDOWN = 1 * 60
 
   attr_reader :dead
 
@@ -14,6 +15,7 @@ class Player < Actor
     @x_speed = 0
     @facing_right = true
     @is_climbing = false
+    @bow_cooldown = 0
     @dead = false
   end
 
@@ -38,6 +40,8 @@ class Player < Actor
   end
 
   def fire(at_x, at_y)
+    return if @bow_cooldown > 0
+    @bow_cooldown = BOW_COOLDOWN
     mid_x = x + w / 2
     mid_y = y + h / 2
 
@@ -66,6 +70,7 @@ class Player < Actor
   end
 
   def simulate(tick_count)
+    @bow_cooldown -= 1
     if @is_climbing
       @drawable = @anm_climb
     else

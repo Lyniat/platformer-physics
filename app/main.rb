@@ -22,13 +22,15 @@ require 'app/lib/map.rb'
 
 WIDTH = 1280
 HEIGHT = 720
+SCALE = 8
+TILE_SIZE = 8
 
 def init args
   init_objects
   @player = Player.new(0, 250, 50, 50 * 2)
   @camera = PlayerCamera.new(args, @player)
   Level.instance.set_camera(@camera)
-  Level.instance.enable_performance_check(750) # lower number might increase performance but also can cause bugs
+  Level.instance.enable_performance_check(300) # lower number might increase performance but also can cause bugs
   @show_debug = true
   @paused = false
   @resetting = false
@@ -36,17 +38,15 @@ end
 
 def init_objects
   # maps have currently bad performance
-  MapLoader.new(54, 35, 8, "/sprites/tiles.png", 24, 21, "/data/map.csv", "/data/tiles.json", 8)
-  cloud_block = Sprite.new(100, 100, "/sprites/cloud_block.png", 0, 0, 16, 16)
-  Solid.new(0, -100, WIDTH, 100, Box.new(WIDTH, 100, Color::RED))
-  Solid.new(0, 150, 100, 100, cloud_block)
-  Solid.new(200, 400, 100, 100, cloud_block)
+  MapLoader.new(54, 35, TILE_SIZE, "/sprites/tiles.png", 24, 21, "/data/map.csv", "/data/tiles.json", SCALE)
 
-  platform_1 = Sprite.new(300, 50, "/sprites/platform.png", 0, 0, 48, 8)
-  PlatformCircle.new(300, 100, 300, 50, 0.02, platform_1, 100)
+  platform_1 = Sprite.new(TILE_SIZE * SCALE * 2, TILE_SIZE * SCALE, "/sprites/platform.png", 0, 0, 48, 8)
+  x = 19 * TILE_SIZE * SCALE
+  y = 15 * TILE_SIZE * SCALE
+  PlatformLinear.new(x, 0, TILE_SIZE * SCALE * 2, TILE_SIZE * SCALE, 0.01, platform_1, x, y)
 
-  platform_2 = Sprite.new(50, 300, "/sprites/platform_2.png", 0, 0, 8, 48)
-  PlatformLinear.new(800, 120, 50, 300, 0.02, platform_2, 1200, 120)
+  #platform_2 = Sprite.new(50, 300, "/sprites/platform_2.png", 0, 0, 8, 48)
+  #PlatformLinear.new(800, 120, 50, 300, 0.02, platform_2, 1200, 120)
 end
 
 def tick args
@@ -92,7 +92,7 @@ def tick args
 end
 
 def reset args
-  @player = Player.new(0, 0, 50, 50 * 2)
+  @player = Player.new(0, 250, 50, 50 * 2)
   @camera = PlayerCamera.new(args, @player)
   Level.instance.set_camera(@camera)
   @resetting = false

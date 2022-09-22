@@ -93,7 +93,7 @@ class Map
             solids << s
           when TILE_JUMP_THROUGH
             # only triggers if movement direction is downwards and actor is at highest point of solid
-            if dir_y < 0 && y == (_y + i + 1) * @tile_size * @scale - 1
+            if dir_y < 0 && y == (_y + i + 1) * @tile_size * @scale
               solids << s
             end
           end
