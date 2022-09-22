@@ -29,14 +29,14 @@ def init args
   @camera = PlayerCamera.new(args, @player)
   Level.instance.set_camera(@camera)
   Level.instance.enable_performance_check(750) # lower number might increase performance but also can cause bugs
-  @show_debug = false
+  @show_debug = true
   @paused = false
   @resetting = false
 end
 
 def init_objects
   # maps have currently bad performance
-  # MapLoader.new(54, 35, 8, "/sprites/tiles.png", 24, 21, "/data/map.csv", "/data/tiles.json", 8)
+  MapLoader.new(54, 35, 8, "/sprites/tiles.png", 24, 21, "/data/map.csv", "/data/tiles.json", 8)
   cloud_block = Sprite.new(100, 100, "/sprites/cloud_block.png", 0, 0, 16, 16)
   Solid.new(0, -100, WIDTH, 100, Box.new(WIDTH, 100, Color::RED))
   Solid.new(0, 150, 100, 100, cloud_block)
@@ -87,6 +87,7 @@ def tick args
   args.outputs.labels << [0, HEIGHT - 320, "solids: #{Level.instance.solids.length}", 0, 0, 0, 0, 255]
   args.outputs.labels << [0, HEIGHT - 340, "services: #{Level.instance.services.length}", 0, 0, 0, 0, 255]
   args.outputs.labels << [0, HEIGHT - 360, "dummies: #{Level.instance.dummies.length}", 0, 0, 0, 0, 255]
+  args.outputs.labels << [0, HEIGHT - 380, "maps: #{Level.instance.maps.length}", 0, 0, 0, 0, 255]
 
 end
 

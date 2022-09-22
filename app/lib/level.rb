@@ -1,5 +1,5 @@
 class Level
-  attr_reader :actors, :solids, :services, :dummies, :camera, :physics_distance
+  attr_reader :actors, :solids, :services, :dummies, :maps, :camera, :physics_distance
 
   @instance = nil
 
@@ -28,6 +28,11 @@ class Level
     @dummies = []
     @dummies_to_add = []
     @dummies_to_destroy = []
+
+    # maps
+    @maps = []
+    @maps_to_add = []
+    @maps_to_destroy = []
 
     @should_destroy = false
     @debug = false
@@ -86,6 +91,14 @@ class Level
     @dummies_to_destroy << dummy
   end
 
+  def add_map map
+    @maps_to_add << map
+  end
+
+  def remove_map map
+    @maps_to_destroy << map
+  end
+
   def destroy
     @should_destroy = true
   end
@@ -109,6 +122,10 @@ class Level
       @dummies.clear
       @dummies_to_add.clear
       @dummies_to_destroy.clear
+
+      @maps.clear
+      @maps_to_add.clear
+      @maps_to_destroy.clear
 
       @instance = nil
     end
@@ -148,6 +165,14 @@ class Level
     # destroy old ones
     @solids -= @solids_to_destroy
     @solids_to_destroy.clear
+
+    # maps
+    # add new ones
+    @maps.concat(@maps_to_add)
+    @maps_to_add.clear
+    # destroy old ones
+    @maps -= @maps_to_destroy
+    @maps_to_destroy.clear
 
     unless @paused
       @services.each do |service|
@@ -190,6 +215,10 @@ class Level
 
     @actors.each do |actor|
       actor.debug_draw(tick_count)
+    end
+
+    @maps.each do |map|
+      map.debug_draw(tick_count)
     end
   end
 

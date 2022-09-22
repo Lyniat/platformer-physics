@@ -14,4 +14,5 @@ class Color
   GREEN = Color.new(0, 255, 0)
   BLACK = Color.new(0, 0, 0)
   YELLOW = Color.new(255, 255, 0)
+  ORANGE = Color.new(255, 153, 0)
 end

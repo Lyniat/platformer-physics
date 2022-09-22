@@ -1,4 +1,7 @@
 class Map
+
+  TILE_EMPTY = 0
+  TILE_SOLID = 1
   def initialize(width, height, tile_size, atlas, atlas_width, data, information, scale)
     @width = width
     @height = height
@@ -8,8 +11,14 @@ class Map
     @data = data
     @information = information
     @scale = scale
+    @tiles = []
+    @solids = []
+    @riders = []
+
+    @debug_rects = []
 
     create_map
+    Level.instance.add_map(self)
   end
 
   def create_map
@@ -28,15 +37,60 @@ class Map
         y_pos = h * @tile_size * @scale
         drawable = Sprite.new(@tile_size, @tile_size, @atlas, x, y, @tile_size, @tile_size, @scale, @scale)
 
+        passable = false
         if passable_information.include?(tile)
-          Dummy.new(x_pos, y_pos, @tile_size * @scale, @tile_size * @scale, drawable)
+          passable = true
         else
-          Solid.new(x_pos, y_pos, @tile_size * @scale, @tile_size * @scale, drawable)
+          @solids[h * @width + w] = Rect.new(x_pos, y_pos, @tile_size * @scale, @tile_size * @scale)
         end
+
+        Dummy.new(x_pos, y_pos, @tile_size * @scale, @tile_size * @scale, drawable)
+
+        @tiles[h * @width + w] = (passable ? TILE_EMPTY : TILE_SOLID)
 
         w += 1
       end
       h += 1
     end
+  end
+
+  def get_tile_at(x, y)
+    @tiles[y * @width + x]
+  end
+
+  def get_solid_at(x, y)
+    @solids[y * @width + x]
+  end
+
+  def get_solids_at(x, y)
+    solids = []
+
+    _x = (x / (@tile_size * @scale)).floor
+    _y = (y / (@tile_size * @scale)).floor
+
+    i = 0
+    while i <= 2
+      j = 0
+      while j <= 2
+        s = @solids[(_y + i) * @width + _x + j]
+        solids << s unless s.nil?
+        j += 1
+      end
+      i += 1
+    end
+
+    @debug_rects += solids
+    solids
+  end
+
+  def add_rider(actor)
+    @riders << actor unless @riders.include?(actor)
+  end
+
+  def debug_draw(tick_count)
+    @debug_rects.each do |rect|
+      rect.debug_draw(tick_count, Color::ORANGE)
+    end
+    @debug_rects.clear
   end
 end

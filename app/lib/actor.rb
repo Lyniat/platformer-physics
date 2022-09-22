@@ -26,6 +26,13 @@ class Actor < Rect
         return true
       end
     end
+
+    Level.instance.maps.find do |map|
+      solids = map.get_solids_at(@x, @y)
+      solids.find do |solid|
+        return true if Rect.check_overlap({x: @x + plus_x, y: @y + plus_y, w: @w, h: @h}, solid)
+      end
+    end
     return false
   end
 
@@ -80,29 +87,61 @@ class Actor < Rect
   def solid_below?
     Level.instance.solids.find do |solid|
       next unless check_distance(solid)
-      Rect.check_overlap({x: @x, y: @y - 1, w: @w, h: @h}, solid)
+      return solid if Rect.check_overlap({x: @x, y: @y - 1, w: @w, h: @h}, solid)
     end
+
+    Level.instance.maps.find do |map|
+      solids = map.get_solids_at(@x, @y)
+      solids.find do |solid|
+        return map if Rect.check_overlap({x: @x, y: @y - 1, w: @w, h: @h}, solid)
+      end
+    end
+    return nil
   end
 
   def solid_above?
     Level.instance.solids.find do |solid|
       next unless check_distance(solid)
-      Rect.check_overlap({x: @x, y: @y + 1, w: @w, h: @h}, solid)
+      return solid if Rect.check_overlap({x: @x, y: @y + 1, w: @w, h: @h}, solid)
     end
+
+    Level.instance.maps.find do |map|
+      solids = map.get_solids_at(@x, @y)
+      solids.find do |solid|
+        return map if Rect.check_overlap({x: @x, y: @y + 1, w: @w, h: @h}, solid)
+      end
+    end
+    return nil
   end
 
   def solid_right?
     Level.instance.solids.find do |solid|
       next unless check_distance(solid)
-      Rect.check_overlap({x: @x + 1, y: @y , w: @w, h: @h}, solid)
+      return solid if Rect.check_overlap({x: @x + 1, y: @y , w: @w, h: @h}, solid)
     end
+
+    Level.instance.maps.find do |map|
+      solids = map.get_solids_at(@x, @y)
+      solids.find do |solid|
+        return map if Rect.check_overlap({x: @x + 1, y: @y, w: @w, h: @h}, solid)
+      end
+    end
+    return nil
   end
 
   def solid_left?
     Level.instance.solids.find do |solid|
       next unless check_distance(solid)
-      Rect.check_overlap({x: @x - 1, y: @y , w: @w, h: @h}, solid)
+      return solid if Rect.check_overlap({x: @x - 1, y: @y , w: @w, h: @h}, solid)
     end
+
+    Level.instance.maps.find do |map|
+      solids = map.get_solids_at(@x, @y)
+      solids.find do |solid|
+        return map if Rect.check_overlap({x: @x - 1, y: @y, w: @w, h: @h}, solid)
+      end
+    end
+    return nil
   end
 
   def on_collision_x(squish)
