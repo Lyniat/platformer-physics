@@ -3,14 +3,21 @@ class Arrow < Projectile
   SIZE = 10
   ANGLE_OFFSET = -45
   INITIAL_SPEED = 15
-  LIFE_TIME = 3 * 60
+  LIFE_TIME = 3
 
   def initialize(x, y, x_speed, y_speed)
-    @drawable = Sprite.new(SIZE,SIZE, '/sprites/arrow_flame.png', 0, 16, 16, 5, 5)
+    @drawable = Sprite.new(SIZE,SIZE, '/sprites/arrow_flame.png', 0, 0, 16, 16, 5, 5)
     super(x, y, x_speed * INITIAL_SPEED, y_speed * INITIAL_SPEED, SIZE, SIZE, @drawable)
     @has_hit = false
     @last_angle = 0
-    @life_time = LIFE_TIME
+    @life_time = LIFE_TIME * 60
+
+    # destroy independent of hitting target
+    Service.new(LIFE_TIME, method(:remove), {}, false)
+  end
+
+  def remove args
+    destroy
   end
 
   def simulate(tick_count)

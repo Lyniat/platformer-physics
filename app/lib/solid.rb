@@ -41,6 +41,7 @@ class Solid < Rect
 
       if move_x > 0
         Level.instance.actors.each do |actor|
+          next unless check_distance(actor)
           if Rect.check_overlap(actor, self)
             actor.move_x(get_right - actor.get_left,self)
           elsif @riders.include? actor
@@ -49,6 +50,7 @@ class Solid < Rect
         end
       else
         Level.instance.actors.each do |actor|
+          next unless check_distance(actor)
           if Rect.check_overlap(actor, self)
             actor.move_x(get_left - actor.get_right,self)
           elsif @riders.include? actor
@@ -65,6 +67,7 @@ class Solid < Rect
 
       if move_y > 0
         Level.instance.actors.each do |actor|
+          next unless check_distance(actor)
           if Rect.check_overlap(actor, self)
             actor.move_y(get_up - actor.get_down,self)
           elsif @riders.include? actor
@@ -73,6 +76,7 @@ class Solid < Rect
         end
       else
         Level.instance.actors.each do |actor|
+          next unless check_distance(actor)
           if Rect.check_overlap(actor, self)
             actor.move_y(get_down - actor.get_up,self)
           elsif @riders.include? actor
@@ -81,6 +85,13 @@ class Solid < Rect
         end
       end
     end
+  end
+
+  def check_distance(actor)
+    c_x, c_y = get_center
+    a_x, a_y = actor.get_center
+    return false if (c_x - a_x).abs + (c_y - a_y).abs > Level.instance.physics_distance
+    true
   end
 
   def destroy

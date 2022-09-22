@@ -1,5 +1,5 @@
 class Level
-  attr_reader :actors, :solids, :camera
+  attr_reader :actors, :solids, :services, :dummies, :camera, :physics_distance
 
   @instance = nil
 
@@ -7,6 +7,7 @@ class Level
     @camera = nil
     @tick_count = 0
     @paused = false
+    @physics_distance = 100000
 
     # actors
     @actors = []
@@ -23,6 +24,11 @@ class Level
     @services_to_add = []
     @services_to_destroy = []
 
+    # dummies
+    @dummies = []
+    @dummies_to_add = []
+    @dummies_to_destroy = []
+
     @should_destroy = false
     @debug = false
   end
@@ -38,6 +44,10 @@ class Level
 
   def pause(on)
     @paused = on
+  end
+
+  def enable_performance_check(distance)
+    @physics_distance = distance
   end
 
   def set_camera(camera)
@@ -68,6 +78,14 @@ class Level
     @services_to_destroy << service
   end
 
+  def add_dummy dummy
+    @dummies_to_add << dummy
+  end
+
+  def remove_dummy dummy
+    @dummies_to_destroy << dummy
+  end
+
   def destroy
     @should_destroy = true
   end
@@ -88,6 +106,10 @@ class Level
       @services_to_add.clear
       @services_to_destroy.clear
 
+      @dummies.clear
+      @dummies_to_add.clear
+      @dummies_to_destroy.clear
+
       @instance = nil
     end
 
@@ -102,6 +124,14 @@ class Level
     # destroy old ones
     @services -= @services_to_destroy
     @services_to_destroy.clear
+
+    # dummies
+    # add new ones
+    @dummies.concat(@dummies_to_add)
+    @dummies_to_add.clear
+    # destroy old ones
+    @dummies -= @dummies_to_destroy
+    @dummies_to_destroy.clear
 
     # actors
     # add new ones
@@ -137,6 +167,10 @@ class Level
   def draw args
     # first update camera
     @camera&.update
+
+    @dummies.each do |dummy|
+      dummy.draw(args.state.tick_count)
+    end
 
     @solids.each do |solid|
       solid.draw(args.state.tick_count)

@@ -20,7 +20,9 @@ class Actor < Rect
   def check_collision(plus_x, plus_y, ignore = nil)
     Level.instance.solids.each do |solid|
       next if solid == ignore
-      if Rect.check_overlap(Rect.new(@x + plus_x, @y + plus_y, @w, @h),solid)
+      # first check distance for performance increase
+      next unless check_distance(solid)
+      if Rect.check_overlap({x: @x + plus_x, y: @y + plus_y, w: @w, h: @h}, solid)
         return true
       end
     end
@@ -76,19 +78,31 @@ class Actor < Rect
   end
 
   def solid_below?
-    Level.instance.solids.find { |solid| Rect.check_overlap(Rect.new(@x, @y - 1, @w, @h), solid) }
+    Level.instance.solids.find do |solid|
+      next unless check_distance(solid)
+      Rect.check_overlap({x: @x, y: @y - 1, w: @w, h: @h}, solid)
+    end
   end
 
   def solid_above?
-    Level.instance.solids.find { |solid| Rect.check_overlap(Rect.new(@x, @y + 1, @w, @h), solid) }
+    Level.instance.solids.find do |solid|
+      next unless check_distance(solid)
+      Rect.check_overlap({x: @x, y: @y + 1, w: @w, h: @h}, solid)
+    end
   end
 
   def solid_right?
-    Level.instance.solids.find { |solid| Rect.check_overlap(Rect.new(@x + 1, @y, @w, @h), solid) }
+    Level.instance.solids.find do |solid|
+      next unless check_distance(solid)
+      Rect.check_overlap({x: @x + 1, y: @y , w: @w, h: @h}, solid)
+    end
   end
 
   def solid_left?
-    Level.instance.solids.find { |solid| Rect.check_overlap(Rect.new(@x - 1, @y, @w, @h), solid) }
+    Level.instance.solids.find do |solid|
+      next unless check_distance(solid)
+      Rect.check_overlap({x: @x - 1, y: @y , w: @w, h: @h}, solid)
+    end
   end
 
   def on_collision_x(squish)
@@ -97,6 +111,13 @@ class Actor < Rect
 
   def on_collision_y(squish)
 
+  end
+
+  def check_distance(solid)
+    c_x, c_y = get_center
+    s_x, s_y = solid.get_center
+    return false if (c_x - s_x).abs + (c_y - s_y).abs > Level.instance.physics_distance
+    true
   end
 
   def destroy
