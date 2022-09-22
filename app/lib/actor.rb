@@ -49,7 +49,7 @@ class Actor < Rect
 
   def move_y(amount, ignore = nil)
     @y_remainder += amount
-    move = @y_remainder.round
+    move = @y_remainder.floor #changing round to floor fixes A LOT of problems (even if not sure why)
 
     return if move == 0
 
