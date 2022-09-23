@@ -8,7 +8,7 @@
 Sadly there are way too many platformers out there which especially suck by having bad controls and/or physics.
 This repository tries to fix this problem by offering a template based on successful implementations.
 
-The main physics concept relies on Maddy Thorson's (known for [Towerfall](http://www.towerfall-game.com), [Celeste](http://www.celestegame.com)) [algorithm](https://maddythorson.medium.com/celeste-and-towerfall-physics-d24bd2ae0fc5) algorithm.
+The main physics concept relies on Maddy Thorson's (known for [Towerfall](http://www.towerfall-game.com), [Celeste](http://www.celestegame.com)) [algorithm](https://maddythorson.medium.com/celeste-and-towerfall-physics-d24bd2ae0fc5).
 Additional concepts are based on [this blog article](http://higherorderfun.com/blog/2012/05/20/the-guide-to-implementing-2d-platformers/) by Rodrigo Monteiro.
 
 To keep development as easy as possible, without learning how to handle a complex game engine, this library uses [DragonRuby Toolkit](https://dragonruby.org/toolkit/game) as base.
