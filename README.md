@@ -1,6 +1,6 @@
 # Platformer Starter Library for DragonRuby
 
-![Example](/screenshots/collisions_2.gif)
+![Example](/screenshots/features.gif)
 
 # About
 Sadly there are way too many platformers out there which especially suck by having bad controls and/or physics.
