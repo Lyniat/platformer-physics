@@ -77,17 +77,17 @@ Since I'm not an english native speaker, there might be more or less misspelling
 So if something is absolutely nonsense, let me also know. 😉
 
 # Further information and recommendations
-## Tilemap editors
+**Tilemap editors**
 - [Tiled](https://www.mapeditor.org)
 - [LDtk](https://ldtk.io)
 
-## Sprite editors
+**Sprite editors**
 - [Aseprite](https://www.aseprite.org)
 
-## Sound editors
+**Sound editors**
 - [Audacity](https://www.audacityteam.org)
 
-## Collections of assets (free and paid)
+**Collections of assets (free and paid)**
 - [OpenGameArt](https://opengameart.org)
 - [freesound](https://freesound.org/)
 - [itch.io](https://itch.io/game-assets)
