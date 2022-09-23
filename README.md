@@ -2,6 +2,8 @@
 
 ![Example](/screenshots/features.gif)
 
+[Try the web demo](https://lyniat.github.io/platformer-physics/)
+
 # About
 Sadly there are way too many platformers out there which especially suck by having bad controls and/or physics.
 This repository tries to fix this problem by offering a template based on successful implementations.
