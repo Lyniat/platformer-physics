@@ -16,7 +16,7 @@ class Animation < Drawable
 
   def draw(tick_count,x, y)
     current_pos = (@active ? (tick_count * @speed).to_i : 0) % @frames
-    $args.outputs.sprites << {
+    $args.render_target(:camera_main).sprites << {
                                x: x - cam_x - @scale_x / 2,
                                y: y - cam_y,
                                w: @w * @scale_x,

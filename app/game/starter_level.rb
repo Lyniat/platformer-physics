@@ -9,7 +9,6 @@ def init args
   @map = map_loader.map
   @map_width = @map.width
   @map_height = @map.height
-  puts "map width: #{@map_width}"
   @player = Player.new(TILE_SIZE * SCALE, TILE_SIZE * SCALE, 50, 50 * 2)
   @camera = PlayerCamera.new(@player, WIDTH, HEIGHT, 0, @map_width * TILE_SIZE * SCALE, 0, @map_height * TILE_SIZE * SCALE)
   Level.instance.set_camera(@camera)

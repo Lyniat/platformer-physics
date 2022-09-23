@@ -17,7 +17,7 @@ class Sprite < Drawable
   end
 
   def draw(tick_count,x, y)
-    $args.outputs.sprites << {
+    $args.render_target(:camera_main).sprites << {
       x: x - cam_x - @scale_x / 2 + offset_x,
       y: y - cam_y + offset_y,
       w: @w * @scale_x,

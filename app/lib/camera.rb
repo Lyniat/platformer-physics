@@ -1,11 +1,11 @@
 class Camera
-  attr_accessor :x, :y
+  attr_accessor :x, :y, :width, :height
 
   def initialize(x, y, w, h, bound_left, bound_right, bound_down, bound_up)
     @x = x
     @y = y
-    @w = w
-    @h = h
+    @width = w
+    @height = h
     @bound_left = bound_left
     @bound_right = bound_right
     @bound_down = bound_down
@@ -28,8 +28,8 @@ class Camera
     end
 
     unless @bound_right.nil?
-      if @x + @w > @bound_right
-        @x = @bound_right - @w
+      if @x + @width > @bound_right
+        @x = @bound_right - @width
       end
     end
 
@@ -40,8 +40,8 @@ class Camera
     end
 
     unless @bound_up.nil?
-      if @y + @h > @bound_up
-        @y = @bound_up - @h
+      if @y + @height > @bound_up
+        @y = @bound_up - @height
       end
     end
   end
