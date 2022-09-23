@@ -27,7 +27,7 @@ TILE_SIZE = 8
 
 def init args
   init_objects
-  @player = Player.new(0, 250, 50, 50 * 2)
+  @player = Player.new(TILE_SIZE * SCALE, TILE_SIZE * SCALE, 50, 50 * 2)
   @camera = PlayerCamera.new(args, @player)
   Level.instance.set_camera(@camera)
   Level.instance.enable_performance_check(300) # lower number might increase performance but also can cause bugs
