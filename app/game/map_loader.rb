@@ -1,4 +1,6 @@
 class MapLoader
+
+  attr_reader :map
   def initialize(width, height, tile_size, atlas, atlas_width, atlas_height, data, information, scale)
     @width = width
     @height = height
@@ -10,7 +12,7 @@ class MapLoader
     @information = information
     @scale = scale
 
-    create_map
+    @map = create_map
   end
 
   def create_map
@@ -77,6 +79,6 @@ class MapLoader
       l += 1
     end
 
-    map = Map.new(@width, @height, @tile_size, @atlas, @atlas_width, data_array, new_infos, @scale)
+    Map.new(@width, @height, @tile_size, @atlas, @atlas_width, data_array, new_infos, @scale)
   end
 end

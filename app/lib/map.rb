@@ -3,6 +3,8 @@ class Map
   TILE_EMPTY = 0
   TILE_SOLID = 1
   TILE_JUMP_THROUGH = 2
+
+  attr_reader :width, :height
   def initialize(width, height, tile_size, atlas, atlas_width, data, information, scale)
     @width = width
     @height = height
@@ -35,23 +37,31 @@ class Map
 
         x = tile % @atlas_width
         y = (tile / @atlas_width).floor
-        x_pos = w * @tile_size * @scale
-        y_pos = h * @tile_size * @scale
-        drawable = Sprite.new(@tile_size, @tile_size, @atlas, x, y, @tile_size, @tile_size, @scale, @scale)
+        x_pos = w * @tile_size
+        y_pos = h * @tile_size
+        drawable = {x: x_pos,
+                    y: y_pos,
+                    w: @tile_size,
+                    h: @tile_size,
+                    path: @atlas,
+                    source_x: x * @tile_size,
+                    source_y: y * @tile_size,
+                    source_w: @tile_size,
+                    source_h: @tile_size}
 
         passable = false
         jump_through = false
         if passable_information.include?(tile)
           passable = true
         else
-          @solids[h * @width + w] = Rect.new(x_pos, y_pos, @tile_size * @scale, @tile_size * @scale)
+          @solids[h * @width + w] = Rect.new(x_pos * @scale, y_pos * @scale, @tile_size * @scale, @tile_size * @scale)
         end
 
         if jump_information.include?(tile)
           jump_through = true
         end
 
-        Dummy.new(x_pos, y_pos, @tile_size * @scale, @tile_size * @scale, drawable)
+        add_tiles(drawable)
 
         if passable
           @tiles[h * @width + w] = TILE_EMPTY
@@ -65,6 +75,13 @@ class Map
       end
       h += 1
     end
+
+    spr = Sprite.new(@tile_size * @scale * @width, @tile_size * @scale * @height, :map_tiles, 0, 0, @tile_size * @width, @tile_size * @height)
+    Dummy.new(0, 0, @tile_size * @scale * @width, @tile_size * @scale * @height, spr)
+  end
+
+  def add_tiles(drawable)
+    $args.render_target(:map_tiles).sprites << drawable
   end
 
   def get_tile_at(x, y)

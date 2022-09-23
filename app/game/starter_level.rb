@@ -5,8 +5,13 @@ TILE_SIZE = 8
 
 def init args
   init_objects
+  map_loader = MapLoader.new(54, 35, TILE_SIZE, "/sprites/tiles.png", 24, 21, "/data/map.csv", "/data/tiles.json", SCALE)
+  @map = map_loader.map
+  @map_width = @map.width
+  @map_height = @map.height
+  puts "map width: #{@map_width}"
   @player = Player.new(TILE_SIZE * SCALE, TILE_SIZE * SCALE, 50, 50 * 2)
-  @camera = PlayerCamera.new(args, @player)
+  @camera = PlayerCamera.new(@player, WIDTH, HEIGHT, 0, @map_width * TILE_SIZE * SCALE, 0, @map_height * TILE_SIZE * SCALE)
   Level.instance.set_camera(@camera)
   Level.instance.enable_performance_check(300) # lower number might increase performance but also can cause bugs
   @show_debug = false
@@ -15,8 +20,6 @@ def init args
 end
 
 def init_objects
-  MapLoader.new(54, 35, TILE_SIZE, "/sprites/tiles.png", 24, 21, "/data/map.csv", "/data/tiles.json", SCALE)
-
   platform_1 = Sprite.new(TILE_SIZE * SCALE * 2, TILE_SIZE * SCALE, "/sprites/platform.png", 0, 0, 48, 8)
   x = 19 * TILE_SIZE * SCALE
   y = 15 * TILE_SIZE * SCALE
@@ -69,12 +72,13 @@ def tick args
   args.outputs.labels << [0, HEIGHT - 340, "services: #{Level.instance.services.length}", 0, 0, 0, 0, 255]
   args.outputs.labels << [0, HEIGHT - 360, "dummies: #{Level.instance.dummies.length}", 0, 0, 0, 0, 255]
   args.outputs.labels << [0, HEIGHT - 380, "maps: #{Level.instance.maps.length}", 0, 0, 0, 0, 255]
+  args.outputs.labels << [0, HEIGHT - 400, "sprites: #{args.outputs.sprites.length}", 0, 0, 0, 0, 255]
 
 end
 
 def reset args
   @player = Player.new(TILE_SIZE * SCALE, TILE_SIZE * SCALE, 50, 50 * 2)
-  @camera = PlayerCamera.new(args, @player)
+  @camera = PlayerCamera.new(@player, WIDTH, HEIGHT,0, @map_width * TILE_SIZE * SCALE, 0, @map_height * TILE_SIZE * SCALE)
   Level.instance.set_camera(@camera)
   @resetting = false
 end

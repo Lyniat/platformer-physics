@@ -65,7 +65,6 @@ Please keep in mind that these additional draw calls might reduce performance.
 - a camera which follows any actor you like
 
 # Planned Features / WIP
-- combined and pre-rendered tilemaps to reduce draw calls
 - ladder tiles which you can climb on
 - liquid tiles for swimming and diving
 - slopes
