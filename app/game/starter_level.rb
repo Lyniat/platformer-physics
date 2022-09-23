@@ -22,6 +22,12 @@ def init_objects
   y = 15 * TILE_SIZE * SCALE
   PlatformLinear.new(x, 0, TILE_SIZE * SCALE * 2, TILE_SIZE * SCALE, 0.01, platform_1, x, y)
 
+  platform_2 = Sprite.new(TILE_SIZE * SCALE * 2, TILE_SIZE * SCALE * 3, "/sprites/platform_2.png", 0, 0, 16, 24)
+  x_2_start = 36 * TILE_SIZE * SCALE
+  y_2_start = 2 * TILE_SIZE * SCALE
+  x_2_end = 51 * TILE_SIZE * SCALE
+  y_2_end = 8 * TILE_SIZE * SCALE
+  PlatformLinear.new(x_2_start, y_2_start, TILE_SIZE * SCALE * 2, TILE_SIZE * SCALE * 3, 0.01, platform_2, x_2_end, y_2_end)
 end
 
 def tick args
@@ -67,7 +73,7 @@ def tick args
 end
 
 def reset args
-  @player = Player.new(0, 250, 50, 50 * 2)
+  @player = Player.new(TILE_SIZE * SCALE, TILE_SIZE * SCALE, 50, 50 * 2)
   @camera = PlayerCamera.new(args, @player)
   Level.instance.set_camera(@camera)
   @resetting = false

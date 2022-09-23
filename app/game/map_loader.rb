@@ -16,8 +16,8 @@ class MapLoader
   def create_map
     infos = $args.gtk.parse_json_file(@information)
     passable_information = infos["passable"]
-
     jump_through_information = infos["jump_through"]
+    ladder_information = infos["ladder"]
 
     new_passable = []
     i = 0
@@ -27,6 +27,17 @@ class MapLoader
       original_p_y = (original_passable / @atlas_width).floor
       new_p_y = @atlas_height - 1 - original_p_y
       new_passable << original_p_x + new_p_y * @atlas_width
+      i += 1
+    end
+
+    # until ladders are not implemented, handle them as passable
+    i = 0
+    while i < ladder_information.length
+      original_ladder = ladder_information[i]
+      original_l_x = original_ladder % @atlas_width
+      original_l_y = (original_ladder / @atlas_width).floor
+      new_l_y = @atlas_height - 1 - original_l_y
+      new_passable << original_l_x + new_l_y * @atlas_width
       i += 1
     end
 
