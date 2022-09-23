@@ -1,0 +1,8 @@
+require 'app/game/player_camera.rb'
+require 'app/game/arrow.rb'
+require 'app/game/player.rb'
+require 'app/game/platform.rb'
+require 'app/game/platform_linear.rb'
+require 'app/game/platform_circle.rb'
+require 'app/game/map_loader.rb'
+require 'app/game/starter_level.rb'
