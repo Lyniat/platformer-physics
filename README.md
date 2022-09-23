@@ -2,7 +2,7 @@
 
 ![Example](/screenshots/features.gif)
 
-[Try the web demo](https://lyniat.github.io/platformer-physics/)
+[Try the web demo](https://lyniat.github.io/platformer-physics/) (but please keep in mind that web builds can have bad performance)
 
 # About
 Sadly there are way too many platformers out there which especially suck by having bad controls and/or physics.
