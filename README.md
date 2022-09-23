@@ -1,6 +1,8 @@
 # Platformer Starter Library for DragonRuby
 
-![Example](/screenshots/features.gif)
+|           Example 1            |            Example 2             |
+|:------------------------------:|:--------------------------------:|
+| ![](/screenshots/features.gif) | ![](/screenshots/features_2.gif) |
 
 [Try the web demo](https://lyniat.github.io/platformer-physics/) (but please keep in mind that web builds can have bad performance)
 
