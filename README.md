@@ -14,7 +14,7 @@ You need at least the [DragonRuby standard license](https://dragonruby.itch.io/d
 
 If you are new to game development or get stuck in development, you are always welcome to join the [official DragonRuby Discord server](discord.dragonruby.org) to ask for help.
 For the case that you do not like the easy way, don't want to learn a new engine or don't like Ruby as programming language, you might port this code to any other engine or software.
-If you do so, it would be cool to let me know and/or give credits to me in your product, although this is not a must. [see license](#License)
+If you do so, it would be cool to let me know and/or give credits to me in your product, although this is not necessary. [see license](#License)
 
 I also really appreciate help improving this library and fixing bugs. [see support](#Support)
 
