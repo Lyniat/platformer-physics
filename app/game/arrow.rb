@@ -1,8 +1,8 @@
 class Arrow < Projectile
 
-  SIZE = 10
+  SIZE = 5
   ANGLE_OFFSET = -45
-  INITIAL_SPEED = 15
+  INITIAL_SPEED = 2.5
   LIFE_TIME = 3
 
   def initialize(x, y, x_speed, y_speed)
@@ -34,8 +34,8 @@ class Arrow < Projectile
       @drawable.angle = degrees
       sin = Math.sin(angle)
       cos = Math.cos(angle)
-      @drawable.offset_x = -25 - cos * 25
-      @drawable.offset_y = -25 - sin * 25
+      @drawable.offset_x = 0# -25 - cos * 25
+      @drawable.offset_y = 0#-25 - sin * 25
       @last_angle = degrees
     end
   end

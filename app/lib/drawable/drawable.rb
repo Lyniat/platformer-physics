@@ -9,12 +9,10 @@ class Drawable
   end
 
   def cam_x
-    camera = Level.instance.camera
-    camera.nil? ? 0 : camera.x
+    Level.instance.camera.x
   end
 
   def cam_y
-    camera = Level.instance.camera
-    camera.nil? ? 0 : camera.y
+    Level.instance.camera.y
   end
 end

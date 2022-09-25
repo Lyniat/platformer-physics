@@ -1,16 +1,19 @@
 class Player < Actor
-  GRAVITY = -50 / 60
-  SPEED = 3
-  CLIMBING_SPEED = 1.5
-  JUMP_VELOCITY = 20
+  GRAVITY = -25 / 60
+  SPEED = 0.7
+  CLIMBING_SPEED = SPEED / 2
+  JUMP_VELOCITY = 5
   BOW_COOLDOWN = 1 * 60
 
   attr_reader :dead
 
-  def initialize(x, y, w, h)
-    @anm_run = Animation.new(w, h, 3, 0.1, '/sprites/panda_sheet.png', 0, 12, 16, 1.333)
-    @anm_climb = Animation.new(w, h, 3, 0.1, '/sprites/panda_sheet.png', 3, 12, 16, 1.333)
-    super(x, y, w, h, @anm_run)
+  def initialize(x, y, w, h, rect)
+    offset_x = -rect.x
+    offset_y = -rect.y
+    @anm_run = Animation.new(w, h, 3, 0.1, '/sprites/panda_sheet.png', 0, w, h, offset_x, offset_y)
+    @anm_climb = Animation.new(w, h, 3, 0.1, '/sprites/panda_sheet.png', 3, w, h, offset_x, offset_y)
+    @rect = rect
+    super(x, y, rect.w, rect.h, @anm_run)
     @y_speed = 0
     @x_speed = 0
     @facing_right = true
@@ -104,7 +107,6 @@ class Player < Actor
 
     @x_speed = 0
     @is_riding = false
-
   end
 
   def draw(tick_count)

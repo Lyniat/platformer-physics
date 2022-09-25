@@ -1,7 +1,7 @@
 class Projectile < Actor
   attr_reader :x_speed, :y_speed
 
-  GRAVITY = -16 / 60
+  GRAVITY = -4 / 60
 
   def initialize(x, y, x_speed, y_speed, w, h, drawable)
     super(x, y, w, h, drawable)

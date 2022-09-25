@@ -1,7 +1,6 @@
 class Level
   attr_reader :actors, :solids, :services, :dummies, :maps, :camera, :physics_distance
 
-  SCREEN_RATIO = 1280 / 720
   @instance = nil
 
   def initialize
@@ -206,23 +205,12 @@ class Level
       actor.draw(args.state.tick_count)
     end
 
-    ratio = @camera.width / @camera.height
-    if ratio > SCREEN_RATIO
-      r = 1280 / @camera.width
-      w = 1280
-      h = @camera.height * r
-    else
-      r = 720 / @camera.height
-      w = @camera.width * r
-      h = 720
-    end
-
     unless @camera.nil?
       $args.outputs.sprites << {
-        x: (1280 - w) / 2,
-        y: (720 - h) / 2,
-        w: w,
-        h: h,
+        x: @camera.rel_x,
+        y: @camera.rel_y,
+        w: @camera.rel_width,
+        h: @camera.rel_height,
         source_w: @camera.width,
         source_h: @camera.height,
         path: :camera_main}

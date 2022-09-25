@@ -26,11 +26,11 @@ class Rect
   end
 
   def get_center_h
-    @x + @w / 2
+    @x + @w
   end
 
   def get_center_v
-    @y + @h / 2
+    @y + @h
   end
 
   def get_center
@@ -43,15 +43,20 @@ class Rect
 
   def debug_draw(tick_count, color)
     camera = Level.instance.camera
-    cam_x = camera.nil? ? 0 : camera.x
-    cam_y = camera.nil? ? 0 : camera.y
-    $args.outputs.lines  << [@x - cam_x, @y - cam_y, @x - cam_x, @y - cam_y + @h, color.r, color.g, color.b, color.a]
-    $args.outputs.lines  << [@x - cam_x + @w, @y - cam_y, @x - cam_x + @w, @y - cam_y + @h, color.r, color.g, color.b, color.a]
 
-    $args.outputs.lines  << [@x - cam_x, @y - cam_y, @x - cam_x + @w, @y - cam_y, color.r, color.g, color.b, color.a]
-    $args.outputs.lines  << [@x - cam_x, @y - cam_y + @h, @x - cam_x + @w, @y - cam_y + @h, color.r, color.g, color.b, color.a]
+    x = @x * camera.x_factor + camera.rel_x
+    y = @y * camera.y_factor + camera.rel_y
+    w = @w * camera.x_factor
+    h = @h * camera.y_factor
+    cam_x = camera.x * camera.x_factor
+    cam_y = camera.y * camera.y_factor
+    $args.outputs.lines  << [x - cam_x, y - cam_y, x - cam_x, y - cam_y + h, color.r, color.g, color.b, color.a]
+    $args.outputs.lines  << [x - cam_x + w, y - cam_y, x - cam_x + w, y - cam_y + h, color.r, color.g, color.b, color.a]
 
-    $args.outputs.lines  << [@x - cam_x, @y - cam_y, @x - cam_x + @w, @y - cam_y + @h, color.r, color.g, color.b, color.a]
-    $args.outputs.lines  << [@x - cam_x + @w, @y - cam_y, @x - cam_x, @y - cam_y + @h, color.r, color.g, color.b, color.a]
+    $args.outputs.lines  << [x - cam_x, y - cam_y, x - cam_x + w, y - cam_y, color.r, color.g, color.b, color.a]
+    $args.outputs.lines  << [x - cam_x, y - cam_y + h, x - cam_x + w, y - cam_y + h, color.r, color.g, color.b, color.a]
+
+    $args.outputs.lines  << [x - cam_x, y - cam_y, x - cam_x + w, y - cam_y + h, color.r, color.g, color.b, color.a]
+    $args.outputs.lines  << [x - cam_x + w, y - cam_y, x - cam_x, y - cam_y + h, color.r, color.g, color.b, color.a]
   end
 end
