@@ -1,8 +1,8 @@
 WIDTH = 1280
 HEIGHT = 720
 TILE_SIZE = 8
-CANVAS_WIDTH = 1280 / 4
-CANVAS_HEIGHT = 720 / 4
+CANVAS_WIDTH = 1280 / 8
+CANVAS_HEIGHT = 720 / 8
 MAP_SCALE = 1
 
 def init args
@@ -51,6 +51,7 @@ def tick args
     @player.move_up if args.inputs.keyboard.key_held.w
     @player.move_down if args.inputs.keyboard.key_held.s
     @player.jump if args.inputs.keyboard.key_down.space
+    @player.jump_accelerate if args.inputs.keyboard.key_held.space
     @player.fire(@camera.mouse_x, @camera.mouse_y) if args.inputs.mouse.click
   end
 

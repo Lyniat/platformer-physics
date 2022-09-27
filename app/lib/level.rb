@@ -1,5 +1,5 @@
 class Level
-  attr_reader :actors, :solids, :services, :dummies, :maps, :camera, :physics_distance
+  attr_reader :actors, :solids, :services, :dummies, :maps, :camera, :physics_distance, :paused
 
   @instance = nil
 
@@ -194,15 +194,15 @@ class Level
     @camera&.update
 
     @dummies.each do |dummy|
-      dummy.draw(args.state.tick_count)
+      dummy.draw(@tick_count)
     end
 
     @solids.each do |solid|
-      solid.draw(args.state.tick_count)
+      solid.draw(@tick_count)
     end
 
     @actors.each do |actor|
-      actor.draw(args.state.tick_count)
+      actor.draw(@tick_count)
     end
 
     unless @camera.nil?
