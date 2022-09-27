@@ -62,6 +62,7 @@ Please keep in mind that these additional draw calls might reduce performance.
 - example player implementation which can move, jump, climb obstacles and shoot arrows
 - "jump through" tiles (you can jump upwards through them and stay on top after you passed them)
 - squish detection
+- pixel perfect drawing
 - a camera which follows any actor you like
 
 # Planned Features / WIP
@@ -71,12 +72,17 @@ Please keep in mind that these additional draw calls might reduce performance.
 - half tiles
 - event tiles (solids) which have an impact on actors (as the well known [Super Mario Jump Block](https://mario.fandom.com/wiki/Jump_Block))
 - controller support
-- better example player physics like holding the "jump key" for higher jumps
 - camera effects like shaking
 - global physics controlling (eg. have a "moon level" where everything has less gravity acceleration)
 - basic pathfinding (without killing your FPS)
 - physics performance mode which reduces accuracy for faster calculations
 - optional z-sorting for sprites
+
+## Known Bugs
+- player's direction is sometimes wrong when climbing
+- mouse position wrong depending on render size
+- shift key (climbing) not working in web build
+- game sometimes crashes when enabling debug draw
 
 # Support
 Beside reporting bugs, you can help me by suggesting new features. Keep in mind that this is a generic library.
@@ -110,3 +116,9 @@ So if something is absolutely nonsense, let me also know. 😉
 - Tileset ["Adve"](https://egordorichev.itch.io/adve) by [egordorichev](https://egordorichev.itch.io) released under [CC0](https://creativecommons.org/share-your-work/public-domain/cc0/)
 - code by Laurin Muth aka. lyniat released under [MIT License](/LICENSE)
 - Panda sprite by [Lea Muth](https://github.com/WauWauGirly)
+
+# Appendix
+Something you always have to remember: Bad physics and controls ruin every platformer, but having good ones does not automatically mean you have a good game.
+Games are more than just good code. See [Celeste](http://www.celestegame.com) as an example. Of course, physics and controls feel fantastic in this game but it offers a lot more.
+Great detailed art, a brilliant soundtrack and also a profound story. This library tries to help you getting the basic gameplay done but to achieve a great game, a lot still relies on you.
+
