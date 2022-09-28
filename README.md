@@ -82,7 +82,6 @@ Please keep in mind that these additional draw calls might reduce performance.
 - player's direction is sometimes wrong when climbing
 - mouse position wrong depending on render size
 - shift key (climbing) not working in web build
-- game sometimes crashes when enabling debug draw
 
 # Support
 Beside reporting bugs, you can help me by suggesting new features. Keep in mind that this is a generic library.
