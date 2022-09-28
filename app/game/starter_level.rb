@@ -76,6 +76,9 @@ def tick args
   args.outputs.labels << [0, HEIGHT - 360, "dummies: #{Level.instance.dummies.length}", 0, 0, 0, 0, 255]
   args.outputs.labels << [0, HEIGHT - 380, "maps: #{Level.instance.maps.length}", 0, 0, 0, 0, 255]
   args.outputs.labels << [0, HEIGHT - 400, "sprites: #{args.outputs.sprites.length}", 0, 0, 0, 0, 255]
+
+  sin_paused_label = Math.sin(args.state.tick_count / 30) * 20
+  args.outputs.labels << [WIDTH / 2, HEIGHT / 2 + sin_paused_label, "GAME PAUSED", 15, 1, 255, 255, 0] if @paused
 end
 
 def reset args
