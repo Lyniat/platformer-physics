@@ -70,6 +70,45 @@ def init(args)
     speed: 0.01
   }
 
+  # create solid grid
+
+  grid = {}
+  grid_w = 40
+  grid_h = 20
+  solid_w = block_size
+  solid_h = block_size
+
+  grid.w = grid_w
+  grid.h = grid_h
+  grid.solid_w = solid_w
+  grid.solid_h = solid_h
+  grid.x = 0
+  grid.y = 0
+  grid.data = []
+
+  y = 0
+  while y < grid_h
+    x = 0
+    while x < grid_w
+      if y % 5 == 0 and ((x + y) % 8 != 0 and (x + y) % 8 != 1)
+        grid_solid = {
+          is_solid: true,
+          meta: {}
+        }
+        grid.data << grid_solid
+      else
+        grid_solid = {
+          is_solid: false
+        }
+        grid.data << grid_solid
+      end
+      x += 1
+    end
+    y += 1
+  end
+
+  args.state.grid = grid
+
   args.state.platforms = [platform_a]
 
   args.state.solids << platform_a
@@ -102,6 +141,30 @@ def draw(args)
 
   args.render_target(args.state.camera).sprites << args.state.solids
 
+  grid = args.state.grid
+  grid_x = grid.x
+  grid_y = grid.y
+  solid_w = grid.solid_w
+  solid_h = grid.solid_h
+
+  y = 0
+  while y < grid.h
+    x = 0
+    while x < grid.w
+      if grid.data[x + y * grid.w].is_solid
+        args.render_target(args.state.camera).sprites << {
+          path: "sprites/platform_3.png",
+          x: grid_x + x * solid_w,
+          y: grid_y + y * solid_h,
+          w: solid_w,
+          h: solid_h
+        }
+      end
+      x += 1
+    end
+    y += 1
+  end
+
   args.outputs.sprites << {
     path: args.state.camera,
     x: 0,
@@ -114,6 +177,7 @@ end
 def simulate_player(args)
   player = args.state.player
   solids = args.state.solids
+  grid = args.state.grid
 
   speed_x = 0
   if args.inputs.keyboard.key_held.a or args.inputs.keyboard.key_held.left
@@ -126,15 +190,15 @@ def simulate_player(args)
     sprite_set_animation(args.state.player_sprite, "idle")
   end
 
-  actor_move_x(player, solids, speed_x)
+  actor_move_x(player, solids, grid, speed_x)
 
-  if args.inputs.keyboard.key_down.space and !actor_get_solid_below(player, solids).nil?
+  if args.inputs.keyboard.key_down.space and !actor_get_solid_below(player, solids, grid).nil?
     player.speed_y = 4
   end
 
   player.speed_y += args.state.gravity
 
-  actor_move_y(player, solids, player.speed_y)
+  actor_move_y(player, solids, grid, player.speed_y)
 end
 
 def simulate_platforms(args)
@@ -144,7 +208,7 @@ def simulate_platforms(args)
     progress = (Math.sin(args.state.tick_count * platform.speed)) / 4.0
     x = platform.start_x * (1.0 - progress) + platform.stop_x * progress
     y = platform.start_y * (1.0 - progress) + platform.stop_y * progress
-    solid_move(platform, args.state.actors, args.state.solids, x - platform.x, progress)
+    solid_move(platform, args.state.actors, args.state.solids, args.state.grid, x - platform.x, progress)
   end
 end
 
@@ -161,9 +225,10 @@ def tick args
 
   actors = args.state.actors
   solids = args.state.solids
+  grid = args.state.grid
 
   actors.each do |actor|
-    actor_simulate(actor, solids)
+    actor_simulate(actor, solids, grid)
   end
 
   simulate_platforms(args)
