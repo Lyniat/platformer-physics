@@ -1,23 +1,12 @@
 def init(args)
+  map = map_load_ldtk("data/ldtk/map.ldtk")
+
+  args.state.map_rt_bg = map_get_sprite_ldtk(args, map, "Level_0", "Background")
   blocks = []
 
-  block_size = 8
-  i = 0
-  while i < 20
-    blocks << {
-      x: i * block_size,
-      y: 0,
-      w: block_size,
-      h: block_size,
-      path: "sprites/platform_3.png",
-      x_remainder: 0,
-      y_remainder: 0,
-      riders: []
-    }
-    i += 1
-  end
+  int_blocks = map_get_int_layer(map, "Level_0", "Meta")
 
-  args.state.solids = blocks
+  block_size = 8
 
   player = {
     x: block_size,
@@ -73,13 +62,11 @@ def init(args)
   # create solid grid
 
   grid = {}
-  grid_w = 40
-  grid_h = 20
   solid_w = block_size
   solid_h = block_size
 
-  grid.w = grid_w
-  grid.h = grid_h
+  grid.w = int_blocks.w
+  grid.h = int_blocks.h
   grid.solid_w = solid_w
   grid.solid_h = solid_h
   grid.x = 0
@@ -87,10 +74,10 @@ def init(args)
   grid.data = []
 
   y = 0
-  while y < grid_h
+  while y < grid.h
     x = 0
-    while x < grid_w
-      if y % 5 == 0 and ((x + y) % 8 != 0 and (x + y) % 8 != 1)
+    while x < grid.w
+      if int_blocks.data[x + y * grid.w] == 1
         grid_solid = {
           is_solid: true,
           meta: {}
@@ -111,7 +98,7 @@ def init(args)
 
   args.state.platforms = [platform_a]
 
-  args.state.solids << platform_a
+  args.state.solids = [platform_a]
   #args.state.solids << platform_b
 
   args.state.player_sprite = sprite_create_base("sprites/panda_sheet.png", 72, 16, 6, 1)
@@ -140,30 +127,13 @@ def draw(args)
   }
 
   args.render_target(args.state.camera).sprites << args.state.solids
-
-  grid = args.state.grid
-  grid_x = grid.x
-  grid_y = grid.y
-  solid_w = grid.solid_w
-  solid_h = grid.solid_h
-
-  y = 0
-  while y < grid.h
-    x = 0
-    while x < grid.w
-      if grid.data[x + y * grid.w].is_solid
-        args.render_target(args.state.camera).sprites << {
-          path: "sprites/platform_3.png",
-          x: grid_x + x * solid_w,
-          y: grid_y + y * solid_h,
-          w: solid_w,
-          h: solid_h
-        }
-      end
-      x += 1
-    end
-    y += 1
-  end
+  args.render_target(args.state.camera).sprites << {
+    path: args.state.map_rt_bg,
+    x: 0,
+    y: 0,
+    w: 1280,
+    h: 720
+  }
 
   args.outputs.sprites << {
     path: args.state.camera,
@@ -238,4 +208,15 @@ def tick args
   end
 
   draw(args)
+end
+
+def hex_to_rgba(hex_color)
+  r = hex_color[1..2].to_i(16)
+  g = hex_color[3..4].to_i(16)
+  b = hex_color[5..6].to_i(16)
+  a = 255
+  if hex_color.size > 7
+    a = hex_color[7..8].to_i(16)
+  end
+  {r: r, g: g, b: b, a: a}
 end

@@ -316,13 +316,13 @@ def check_overlap_grid(actor, grid)
   iteration_x_end = iteration_x_start + actor_w.div(solid_w) + 1
 
   iteration_x_start = iteration_x_start > 0 ? iteration_x_start : 0
-  iteration_x_end = iteration_x_end < grid_w ? iteration_x_end : grid_w - 1
+  iteration_x_end = iteration_x_end < grid_w ? iteration_x_end : grid_w
 
   iteration_y_start = (actor_y - grid_y).div(solid_h)
   iteration_y_end = iteration_y_start + actor_h.div(solid_h) + 1
 
   iteration_y_start = iteration_y_start > 0 ? iteration_y_start : 0
-  iteration_y_end = iteration_y_end < grid_h ? iteration_y_end : grid_h - 1
+  iteration_y_end = iteration_y_end < grid_h ? iteration_y_end : grid_h
 
   y = iteration_y_start
   while y < iteration_y_end
