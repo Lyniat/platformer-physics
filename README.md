@@ -115,7 +115,7 @@ So if something is absolutely nonsense, let me also know. 😉
 - Tileset ["Adve"](https://egordorichev.itch.io/adve) by [egordorichev](https://egordorichev.itch.io) released under [CC0](https://creativecommons.org/share-your-work/public-domain/cc0/)
 - code by Laurin Muth aka. lyniat released under [MIT License](/LICENSE)
 - Panda sprite by [Lea Muth](https://github.com/WauWauGirly)
-- [LDtkBridge](https://github.com/LittleB0xes/LDtkBridge) by [Nicolas Henriot](https://github.com/LittleB0xes) released under [MIT License](https://github.com/LittleB0xes/LDtkBridge/blob/main/LICENSE)
+- ldtk loader based on [LDtkBridge](https://github.com/LittleB0xes/LDtkBridge) by [Nicolas Henriot](https://github.com/LittleB0xes) released under [MIT License](https://github.com/LittleB0xes/LDtkBridge/blob/main/LICENSE)
 
 # Appendix
 Something you always have to remember: Bad physics and controls ruin every platformer, but having good ones does not automatically mean you have a good game.

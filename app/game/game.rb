@@ -1,10 +1,15 @@
 def init(args)
-  map = map_load_ldtk("data/ldtk/map.ldtk")
+  #map = map_load_ldtk("data/ldtk/map.ldtk")
+  map = map_load_ldtk("data/ldtk/sample.ldtk")
 
-  args.state.map_rt_bg = map_get_sprite_ldtk(args, map, "Level_0", "Background")
+  #args.state.map_rt_bg = map_get_sprite_ldtk(args, map, "Level_0", "Background")
+  args.state.map_rt_bg = map_get_sprite_ldtk(args, map, "AutoLayers_advanced_demo", "IntGrid_layer")
   blocks = []
 
-  int_blocks = map_get_int_layer(map, "Level_0", "Meta")
+  #int_blocks = map_get_int_layer(map, "Level_0", "Meta")
+  int_blocks = map_get_int_layer(map, "AutoLayers_advanced_demo", "IntGrid_layer")
+
+  #puts int_blocks
 
   block_size = 8
 
