@@ -4,18 +4,24 @@ def init(args)
 
   #args.state.map_rt_bg = map_get_sprite_ldtk(args, map, "Level_0", "Background")
   args.state.map_rt_bg = map_get_sprite_ldtk(args, map, "AutoLayers_advanced_demo", "IntGrid_layer")
+  args.state.map_rt_sky = map_get_sprite_ldtk(args, map, "AutoLayers_advanced_demo", "Sky")
   blocks = []
 
   #int_blocks = map_get_int_layer(map, "Level_0", "Meta")
   int_blocks = map_get_int_layer(map, "AutoLayers_advanced_demo", "IntGrid_layer")
+
+
+  entities = map_get_entities_layer(map, "AutoLayers_advanced_demo", "Entities")
+
+  player_entity = entities.data["Player"]
 
   #puts int_blocks
 
   block_size = 8
 
   player = {
-    x: block_size,
-    y: block_size,
+    x: player_entity.x,
+    y: player_entity.y,
     w: 12,
     h: 16,
     x_remainder: 0,
@@ -112,32 +118,65 @@ def init(args)
 
   args.state.camera = :camera
   args.state.camera_zoom = 4
+  args.state.camera_settings = {x: 0, y: 0}
+
+  bg_color = map.levels[:AutoLayers_advanced_demo].color
+  args.state.bg_color = [bg_color.r, bg_color.g, bg_color.b]
+
+  puts args.state.bg_color
 end
 
 def draw(args)
   #args.outputs.sprites << args.state.player
+  # set camera
+
+  args.outputs.background_color = args.state.bg_color
+
+  args.state.camera_settings.x = (args.state.player.x + args.state.player.w / 2) - (1280 / args.state.camera_zoom) / 2
+  args.state.camera_settings.y = (args.state.player.y + args.state.player.h / 2) - (720 / args.state.camera_zoom) / 2
+
+  cam_x = args.state.camera_settings.x
+  cam_y = args.state.camera_settings.y
+
+  #args.render_target(args.state.camera).sprites << args.state.solids
+  args.render_target(args.state.camera).sprites << {
+    path: args.state.map_rt_sky,
+    x: -cam_x,
+    y: -cam_y,
+    w: 1280,
+    h: 720
+  }
+
+  args.render_target(args.state.camera).sprites << {
+    path: args.state.map_rt_bg,
+    x: -cam_x,
+    y: -cam_y,
+    w: 1280,
+    h: 720
+  }
+
+  args.state.solids.each do |solid|
+    args.render_target(args.state.camera).sprites << {
+      path: solid.path,
+      x: solid.x - cam_x,
+      y: solid.y - cam_y,
+      w: solid.w,
+      h: solid.h
+    }
+  end
 
   sprite_update_animation(args.state.player_sprite)
 
   args.render_target(args.state.camera).sprites << {
     path: args.state.player_sprite.path,
-    x: args.state.player.x,
-    y: args.state.player.y,
+    x: args.state.player.x - cam_x,
+    y: args.state.player.y - cam_y,
     w: 12,
     h: 16,
     source_w: args.state.player_sprite.source_w,
     source_h: args.state.player_sprite.source_h,
     source_x: args.state.player_sprite.source_x,
     source_y: args.state.player_sprite.source_y,
-  }
-
-  args.render_target(args.state.camera).sprites << args.state.solids
-  args.render_target(args.state.camera).sprites << {
-    path: args.state.map_rt_bg,
-    x: 0,
-    y: 0,
-    w: 1280,
-    h: 720
   }
 
   args.outputs.sprites << {
@@ -213,15 +252,4 @@ def tick args
   end
 
   draw(args)
-end
-
-def hex_to_rgba(hex_color)
-  r = hex_color[1..2].to_i(16)
-  g = hex_color[3..4].to_i(16)
-  b = hex_color[5..6].to_i(16)
-  a = 255
-  if hex_color.size > 7
-    a = hex_color[7..8].to_i(16)
-  end
-  {r: r, g: g, b: b, a: a}
 end

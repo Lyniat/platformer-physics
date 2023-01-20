@@ -31,6 +31,8 @@ def map_get_level_ldtk(level, tilesets)
   px_h = level["pxHei"]
   world_x = level["worldX"]
   world_y = level["worldY"]
+  hex_color = level["__bgColor"]
+  color = hex_to_rgba(hex_color)
 
   level_data = {}
 
@@ -46,7 +48,8 @@ def map_get_level_ldtk(level, tilesets)
     px_h: px_h,
     x: world_x,
     y: world_y,
-    layers: level_data
+    layers: level_data,
+    color: color
   }
 end
 
@@ -67,6 +70,7 @@ def map_get_layer_ldtk(layer, tilesets)
     iid: layer_iid,
     tiles: {},
     auto_tiles: {},
+    entities: {},
     int_grid: {},
     tileset_path: ""
   }
@@ -76,11 +80,14 @@ def map_get_layer_ldtk(layer, tilesets)
     layer_type = :tiles
   when "IntGrid"
     layer_type = :intGrid
+  when "Entities"
+    layer_type = :entities
   end
 
   grid_tiles = layer["gridTiles"]
   int_tiles = layer["intGridCsv"]
   auto_tiles = layer["autoLayerTiles"]
+  entities = layer["entityInstances"]
 
   unless grid_tiles.nil?
     if grid_tiles.size > 0
@@ -105,6 +112,12 @@ def map_get_layer_ldtk(layer, tilesets)
       tileset = tilesets[tileset_id]
       tileset_path = tileset[:path]
       data.auto_tiles = map_get_layer_data_tiles_ldtk(auto_tiles, tileset, data)
+    end
+  end
+
+  unless entities.nil?
+    if entities.size > 0
+      data.entities = map_get_layer_data_entities_ldtk(entities, data)
     end
   end
 
@@ -153,9 +166,23 @@ def map_get_layer_data_int_grid_ldtk(int_tiles, data)
   int_values
 end
 
-#render_target = "map_#{world}_#{level}_#{layer}".to_sym
-#args.render_target(render_target).sprites << layer.render
-#render_target
+def map_get_layer_data_entities_ldtk(entities, data)
+  ent_values = {}
+  entities.each do |e|
+    x = e["__grid"][0] * data.cell_size
+    y = (data.cell_height - e["__grid"][1] - 1) * data.cell_size
+    w = e["width"]
+    h = e["height"]
+    name = e["__identifier"]
+
+    ent_values[name] = {name: name,
+                        x: x,
+                        y: y,
+                        w: w,
+                        h: h}
+  end
+  ent_values
+end
 
 def map_get_sprite_ldtk(args, world, level, layer)
   level = level.to_sym unless  level.is_a? Symbol
@@ -199,4 +226,15 @@ def map_get_int_layer(world, level, layer)
   {w: layer_to_find.cell_width,
    h: layer_to_find.cell_height,
    data: layer_to_find.int_grid}
+end
+
+def map_get_entities_layer(world, level, layer)
+  level = level.to_sym unless  level.is_a? Symbol
+  layer = layer.to_sym unless layer.is_a? Symbol
+  layer_to_find =  world.levels[level].layers[layer]
+  return if layer_to_find.nil?
+
+  {w: layer_to_find.cell_width,
+   h: layer_to_find.cell_height,
+   data: layer_to_find.entities}
 end

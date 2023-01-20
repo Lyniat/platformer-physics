@@ -111,8 +111,12 @@ So if something is absolutely nonsense, let me also know. 😉
 - [freesound](https://freesound.org/)
 - [itch.io](https://itch.io/game-assets)
 
+**Stuff to read**
+- [Sonic Physics](http://info.sonicretro.org/Sonic_Physics_Guide)
+
 # License
 - Tileset ["Adve"](https://egordorichev.itch.io/adve) by [egordorichev](https://egordorichev.itch.io) released under [CC0](https://creativecommons.org/share-your-work/public-domain/cc0/)
+- Tileset ["Cavernas"](https://adamatomic.itch.io/cavernas) by [Adam Saltsman](https://adamatomic.itch.io) released under "public domain"
 - code by Laurin Muth aka. lyniat released under [MIT License](/LICENSE)
 - Panda sprite by [Lea Muth](https://github.com/WauWauGirly)
 - ldtk loader based on [LDtkBridge](https://github.com/LittleB0xes/LDtkBridge) by [Nicolas Henriot](https://github.com/LittleB0xes) released under [MIT License](https://github.com/LittleB0xes/LDtkBridge/blob/main/LICENSE)
