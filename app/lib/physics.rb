@@ -54,11 +54,19 @@ def actor_move_x(actor, solids, grid, amount, ignore = nil)
       actor.x = x
       move -= sign
     else
+      should_break = true
+
       on_collision_actor = actor.on_collision_x
       on_collision_solid = solid.on_collision_x
-      method(on_collision_actor).call(actor, solid, ignore != nil) unless on_collision_actor.nil?
+
+      should_break = method(on_collision_actor).call(actor, solid, ignore != nil) unless on_collision_actor.nil?
       method(on_collision_solid).call(actor, solid, ignore != nil) unless on_collision_solid.nil?
-      break
+
+      break unless should_break == false
+
+      x += sign
+      actor.x = x
+      move -= sign
     end
   end
 
@@ -99,11 +107,19 @@ def actor_move_y(actor, solids, grid, amount, ignore = nil)
       actor.y = y
       move -= sign
     else
+      should_break = true
+
       on_collision_actor = actor.on_collision_y
       on_collision_solid = solid.on_collision_y
-      method(on_collision_actor).call(actor, solid, ignore != nil) unless on_collision_actor.nil?
+
+      should_break = method(on_collision_actor).call(actor, solid, ignore != nil) unless on_collision_actor.nil?
       method(on_collision_solid).call(actor, solid, ignore != nil) unless on_collision_solid.nil?
-      break
+
+      break unless should_break == false
+
+      y += sign
+      actor.y = y
+      move -= sign
     end
   end
 
@@ -263,38 +279,7 @@ end
 
 # ADDITIONAL CODE FOR GRIDS
 def actor_check_collision_grid(actor, grid, plus_x, plus_y)
-  return check_overlap_grid({x: actor.x + plus_x, y: actor.y + plus_y, w: actor.w, h: actor.h}, grid)
-  actor_x = actor.x
-  actor_y = actor.y
-  actor_w = actor.w
-  actor_h = actor.h
-  grid_x = grid.x
-  grid_y = grid.y
-  grid_w = grid.w
-  grid_h = grid.h
-  solid_w = grid.solid_w
-  solid_h = grid.solid_h
-  data = grid.data
-
-  y = 0
-  while y < grid_h
-    x = 0
-    while x < grid_w
-      cell = data[x + y * grid_w]
-      is_solid = cell.is_solid
-      if is_solid
-        solid = {x: grid_x + x * solid_w, y: grid_y +  y * solid_h, w: solid_w, h: solid_h}
-        has_overlap = check_overlap({x: actor_x + plus_x, y: actor_y + plus_y, w: actor_w, h: actor_h}, solid)
-        if has_overlap
-          return solid
-        end
-      end
-      x += 1
-    end
-    y += 1
-  end
-
-  nil
+  check_overlap_grid({x: actor.x + plus_x, y: actor.y + plus_y, w: actor.w, h: actor.h}, grid)
 end
 
 def check_overlap_grid(actor, grid)
@@ -334,7 +319,7 @@ def check_overlap_grid(actor, grid)
         solid = {x: grid_x + x * solid_w, y: grid_y + y * solid_h, w: solid_w, h: solid_h}
         has_overlap = check_overlap({x: actor_x, y: actor_y, w: actor_w, h: actor_h}, solid)
         if has_overlap
-          return solid
+          return solid.merge(cell)
         end
       end
       x += 1

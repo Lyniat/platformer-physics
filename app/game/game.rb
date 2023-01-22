@@ -28,6 +28,8 @@ def init(args)
     y_remainder: 0,
     is_riding: false,
     speed_y: 0,
+    jump_down: false,
+    on_collision_x: :on_player_x_collision,
     on_collision_y: :on_player_y_collision
   }
 
@@ -92,6 +94,12 @@ def init(args)
         grid_solid = {
           is_solid: true,
           meta: {}
+        }
+        grid.data << grid_solid
+      elsif int_blocks.data[x + y * grid.w] == 5
+        grid_solid = {
+          is_solid: true,
+          jump_through: true
         }
         grid.data << grid_solid
       else
@@ -193,6 +201,8 @@ def simulate_player(args)
   solids = args.state.solids
   grid = args.state.grid
 
+  player.jump_down = false
+
   speed_x = 0
   if args.inputs.keyboard.key_held.a or args.inputs.keyboard.key_held.left
     speed_x = -0.5
@@ -206,8 +216,17 @@ def simulate_player(args)
 
   actor_move_x(player, solids, grid, speed_x)
 
-  if args.inputs.keyboard.key_down.space and !actor_get_solid_below(player, solids, grid).nil?
-    player.speed_y = 4
+  #if args.inputs.keyboard.key_down.space and !actor_get_solid_below(player, solids, grid).nil?
+  #  player.speed_y = 4
+  #end
+  #
+  if args.inputs.keyboard.key_down.space
+    if args.inputs.keyboard.key_held.s
+      player.speed_y = -1
+      player.jump_down = true
+    elsif !actor_get_solid_below(player, solids, grid).nil?
+      player.speed_y = 4
+    end
   end
 
   player.speed_y += args.state.gravity
@@ -226,8 +245,18 @@ def simulate_platforms(args)
   end
 end
 
+def on_player_x_collision(actor, solid, squish_actor)
+  false if solid.jump_through
+end
+
 def on_player_y_collision(actor, solid, squish_actor)
+  if solid.jump_through
+    if actor.speed_y >= 0 or actor.y < solid.y + solid.h or actor.jump_down == true
+      return false
+    end
+  end
   actor.speed_y = 0
+  true
 end
 
 def tick args
