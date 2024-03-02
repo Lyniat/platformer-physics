@@ -8,7 +8,39 @@ def init(args)
   blocks = []
 
   #int_blocks = map_get_int_layer(map, "Level_0", "Meta")
-  int_blocks = map_get_int_layer(map, "AutoLayers_advanced_demo", "IntGrid_layer")
+  #int_blocks = map_get_int_layer(map, "AutoLayers_advanced_demo", "IntGrid_layer")
+
+  int_blocks =  [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+                 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+                 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+                 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+                 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+                 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1,
+                 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+                 1, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+                 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+                 1, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+                 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+                 1, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+                 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+                 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+              ]
+
+tiles =       [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+               1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+               1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+               1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+               1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+               1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1,
+               1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+               1, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+               1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+               1, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+               1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+               1, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+               1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+               1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+            ]
 
 
   entities = map_get_entities_layer(map, "AutoLayers_advanced_demo", "Entities")
@@ -17,7 +49,7 @@ def init(args)
 
   #puts int_blocks
 
-  block_size = 8
+  block_size =  16
 
   player = {
     x: player_entity.x,
@@ -78,6 +110,9 @@ def init(args)
   solid_w = block_size
   solid_h = block_size
 
+  int_blocks.w = Math.sqrt(int_blocks.length())
+  int_blocks.h = Math.sqrt(int_blocks.length())
+
   grid.w = int_blocks.w
   grid.h = int_blocks.h
   grid.solid_w = solid_w
@@ -90,13 +125,13 @@ def init(args)
   while y < grid.h
     x = 0
     while x < grid.w
-      if int_blocks.data[x + y * grid.w] == 1
+      if int_blocks[x + y * grid.w] == 1
         grid_solid = {
           is_solid: true,
           meta: {}
         }
         grid.data << grid_solid
-      elsif int_blocks.data[x + y * grid.w] == 5
+      elsif int_blocks[x + y * grid.w] == 2
         grid_solid = {
           is_solid: true,
           jump_through: true
@@ -281,4 +316,41 @@ def tick args
   end
 
   draw(args)
+
+  draw_debug_grid(args)
+end
+
+def draw_debug_grid(args)
+  grid = args.state.grid
+  #grid.w = 14 #int_blocks.w
+  #grid.h = 14 #int_blocks.h
+  #grid.solid_w = solid_w
+  #grid.solid_h = solid_h
+  #grid.x = 0
+  #grid.y = 0
+  #grid.data = []
+
+  cam_x = args.state.camera_settings.x
+  cam_y = args.state.camera_settings.y
+
+  grid_w = grid.w
+  grid_h = grid.h
+  grid_cells = grid_w * grid_h
+  solid_w = grid.solid_w
+  solid_h = grid.solid_h
+  grid_cells.map_with_index do |i|
+    # i = x + y * grid.w # i - x = y * grid.w # -x = y * grid.w - i # x = - y * grid.w + i
+    x = (i % grid_w)
+    y = (i / grid_w).floor
+    puts grid.data[i]
+    next if !grid.data[i].is_solid
+    args.outputs.debug << {
+      x: (x *  solid_w * args.state.camera_zoom) - cam_x * args.state.camera_zoom,
+      y: (y * solid_h * args.state.camera_zoom) - cam_y * args.state.camera_zoom,
+      # x: x - cam_x * args.state.camera_zoom,
+      # y: y - cam_y * args.state.camera_zoom,
+      w: solid_w * args.state.camera_zoom,
+      h: solid_h  * args.state.camera_zoom,
+      primitive_marker: :solid }  
+  end
 end
