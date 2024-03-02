@@ -1,61 +1,33 @@
 def init(args)
-  #map = map_load_ldtk("data/ldtk/map.ldtk")
-  map = map_load_ldtk("data/ldtk/sample.ldtk")
-
-  #args.state.map_rt_bg = map_get_sprite_ldtk(args, map, "Level_0", "Background")
-  args.state.map_rt_bg = map_get_sprite_ldtk(args, map, "AutoLayers_advanced_demo", "IntGrid_layer")
-  args.state.map_rt_sky = map_get_sprite_ldtk(args, map, "AutoLayers_advanced_demo", "Sky")
   blocks = []
 
-  #int_blocks = map_get_int_layer(map, "Level_0", "Meta")
+  int_blocks, int_columns, int_rows = map_get_int_layer(args, "data/ldtk/sample/simplified/AutoLayers_advanced_demo/IntGrid_layer.csv")
   #int_blocks = map_get_int_layer(map, "AutoLayers_advanced_demo", "IntGrid_layer")
 
-  int_blocks =  [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-                 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-                 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-                 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-                 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-                 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1,
-                 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-                 1, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-                 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-                 1, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-                 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-                 1, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-                 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-                 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-              ]
-
-tiles =       [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-               1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-               1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-               1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-               1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-               1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1,
-               1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-               1, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-               1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-               1, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-               1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-               1, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-               1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-               1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-            ]
-
-
-  entities = map_get_entities_layer(map, "AutoLayers_advanced_demo", "Entities")
-
-  player_entity = entities.data["Player"]
+  map_data = args.gtk.parse_json_file("data/ldtk/sample/simplified/AutoLayers_advanced_demo/data.json")
+  player_entity = map_data["entities"]["Player"][0]
+  player_x = player_entity["x"]
+  player_y = player_entity["y"]
 
   #puts int_blocks
 
-  block_size =  16
+  args.state.map_rt_sky.path = "data/ldtk/sample/simplified/AutoLayers_advanced_demo/Sky.png"
+  args.state.map_rt_sky.w = 344
+  args.state.map_rt_sky.h = 328
+
+  args.state.int_bg.path = "data/ldtk/sample/simplified/AutoLayers_advanced_demo/IntGrid_layer.png"
+  args.state.int_bg.w = 344
+  args.state.int_bg.h = 328
+
+  block_size =  8
 
   player = {
-    x: player_entity.x,
-    y: player_entity.y,
-    w: 12,
-    h: 16,
+    x: player_x,
+    y: player_y - 64,
+    w: 6,
+    h: 6,
+    sprite_w: 8,
+    sprite_h: 8,
     x_remainder: 0,
     y_remainder: 0,
     is_riding: false,
@@ -110,8 +82,8 @@ tiles =       [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
   solid_w = block_size
   solid_h = block_size
 
-  int_blocks.w = Math.sqrt(int_blocks.length())
-  int_blocks.h = Math.sqrt(int_blocks.length())
+  int_blocks.w = int_rows
+  int_blocks.h = int_columns
 
   grid.w = int_blocks.w
   grid.h = int_blocks.h
@@ -121,8 +93,8 @@ tiles =       [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
   grid.y = 0
   grid.data = []
 
-  y = 0
-  while y < grid.h
+  y = grid.h - 1
+  while y >= 0
     x = 0
     while x < grid.w
       if int_blocks[x + y * grid.w] == 1
@@ -131,7 +103,7 @@ tiles =       [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
           meta: {}
         }
         grid.data << grid_solid
-      elsif int_blocks[x + y * grid.w] == 2
+      elsif int_blocks[x + y * grid.w] == 5
         grid_solid = {
           is_solid: true,
           jump_through: true
@@ -145,7 +117,7 @@ tiles =       [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
       end
       x += 1
     end
-    y += 1
+    y -= 1
   end
 
   args.state.grid = grid
@@ -155,18 +127,17 @@ tiles =       [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
   args.state.solids = [platform_a]
   #args.state.solids << platform_b
 
-  args.state.player_sprite = sprite_create_base("sprites/panda_sheet.png", 72, 16, 6, 1)
+  args.state.player_sprite = sprite_create_base("sprites/panda.png", 24, 8, 3, 1)
   sprite_add_animation(args.state.player_sprite, "idle", 0, 0, 1, 1)
   sprite_add_animation(args.state.player_sprite, "walking", 0, 0, 3, 10)
+  args.state.player_flipped = false
 
   args.state.camera = :camera
   args.state.camera_zoom = 4
   args.state.camera_settings = {x: 0, y: 0}
 
-  bg_color = map.levels[:AutoLayers_advanced_demo].color
+  bg_color = string_to_rgb(map_data["bgColor"])
   args.state.bg_color = [bg_color.r, bg_color.g, bg_color.b]
-
-  puts args.state.bg_color
 end
 
 def draw(args)
@@ -183,19 +154,19 @@ def draw(args)
 
   #args.render_target(args.state.camera).sprites << args.state.solids
   args.render_target(args.state.camera).sprites << {
-    path: args.state.map_rt_sky,
+    path: args.state.map_rt_sky.path,
     x: -cam_x,
     y: -cam_y,
-    w: 1280,
-    h: 720
+    w: args.state.map_rt_sky.w,
+    h: args.state.map_rt_sky.h,
   }
 
   args.render_target(args.state.camera).sprites << {
-    path: args.state.map_rt_bg,
+    path: args.state.int_bg.path,
     x: -cam_x,
     y: -cam_y,
-    w: 1280,
-    h: 720
+    w: args.state.int_bg.w,
+    h: args.state.int_bg.h,
   }
 
   args.state.solids.each do |solid|
@@ -214,12 +185,13 @@ def draw(args)
     path: args.state.player_sprite.path,
     x: args.state.player.x - cam_x,
     y: args.state.player.y - cam_y,
-    w: 12,
-    h: 16,
+    w: args.state.player.sprite_w,
+    h: args.state.player.sprite_h,
     source_w: args.state.player_sprite.source_w,
     source_h: args.state.player_sprite.source_h,
     source_x: args.state.player_sprite.source_x,
     source_y: args.state.player_sprite.source_y,
+    flip_horizontally: args.state.player_flipped,
   }
 
   args.outputs.sprites << {
@@ -242,9 +214,11 @@ def simulate_player(args)
   if args.inputs.keyboard.key_held.a or args.inputs.keyboard.key_held.left
     speed_x = -0.5
     sprite_set_animation(args.state.player_sprite, "walking")
+    args.state.player_flipped = true
   elsif args.inputs.keyboard.key_held.d or args.inputs.keyboard.key_held.right
     speed_x = 0.5
     sprite_set_animation(args.state.player_sprite, "walking")
+    args.state.player_flipped = false
   else
     sprite_set_animation(args.state.player_sprite, "idle")
   end
@@ -342,7 +316,6 @@ def draw_debug_grid(args)
     # i = x + y * grid.w # i - x = y * grid.w # -x = y * grid.w - i # x = - y * grid.w + i
     x = (i % grid_w)
     y = (i / grid_w).floor
-    puts grid.data[i]
     next if !grid.data[i].is_solid
     args.outputs.debug << {
       x: (x *  solid_w * args.state.camera_zoom) - cam_x * args.state.camera_zoom,
@@ -351,6 +324,10 @@ def draw_debug_grid(args)
       # y: y - cam_y * args.state.camera_zoom,
       w: solid_w * args.state.camera_zoom,
       h: solid_h  * args.state.camera_zoom,
+      r: 255,
+      g: 0,
+      b: 0,
+      a: 100,
       primitive_marker: :solid }  
   end
 end
