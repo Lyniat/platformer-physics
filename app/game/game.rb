@@ -210,6 +210,8 @@ def draw(args)
     flip_horizontally: args.state.player_flipped,
   }
 
+  args.outputs[:camera].transient!
+
   args.outputs.sprites << {
     path: args.state.camera,
     x: 0,
