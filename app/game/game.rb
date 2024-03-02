@@ -305,7 +305,7 @@ def simulate_player(args)
     player.physics.speed.y = -player.physics.const.maxfall
   end
 
-  if args.inputs.keyboard.key_held.space
+  if args.inputs.keyboard.key_down.space
     jump_allowed = player.on_ground
     if !jump_allowed
       jump_allowed = get_from_action_buffer(player.action_buffer, "ground")
@@ -313,7 +313,9 @@ def simulate_player(args)
     if jump_allowed
       player.physics.jump_remain = player.physics.const.max_jump_remain
       player.physics.speed.y = 2
-    elsif player.physics.jump_remain > 0
+    end
+  elsif args.inputs.keyboard.key_held.space
+    if player.physics.jump_remain > 0
       player.physics.speed.y *= 1.1
     end
   end
