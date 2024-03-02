@@ -297,14 +297,17 @@ def check_overlap_grid(actor, grid)
 
   # calculate which cells could possibly collide with the actor to reduce iterations
 
+  actor_w_min = actor_w > solid_w ? actor_w : solid_w
+  actor_h_min = actor_h > solid_h ? actor_h : solid_h
+
   iteration_x_start = (actor_x - grid_x).div(solid_w)
-  iteration_x_end = iteration_x_start + actor_w.div(solid_w) + 1
+  iteration_x_end = iteration_x_start + actor_w_min.div(solid_w) + 1
 
   iteration_x_start = iteration_x_start > 0 ? iteration_x_start : 0
   iteration_x_end = iteration_x_end < grid_w ? iteration_x_end : grid_w
 
   iteration_y_start = (actor_y - grid_y).div(solid_h)
-  iteration_y_end = iteration_y_start + actor_h.div(solid_h) + 1
+  iteration_y_end = iteration_y_start + actor_h_min.div(solid_h) + 1
 
   iteration_y_start = iteration_y_start > 0 ? iteration_y_start : 0
   iteration_y_end = iteration_y_end < grid_h ? iteration_y_end : grid_h

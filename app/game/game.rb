@@ -39,6 +39,22 @@ def init(args)
 
   args.state.player = player
 
+  player.physics = {}
+  player.physics.speed = {}
+  player.physics.const = {}
+  player.physics.speed.x = 0
+  player.physics.speed.y = 0
+  player.physics.jump_remain = 0
+  player.physics.const.maxfall = 2
+  player.physics.const.gravity = 0.21
+  player.physics.jumping = false
+  player.physics.was_on_ground = false
+  player.physics.const.maxrun = 1
+  player.physics.const.accel = 0.6
+  player.physics.const.deccel = 0.15
+  player.physics.const.max_jump_remain = 8
+  player.action_buffer = []
+
   args.state.actors = []
   args.state.actors << player
 
@@ -203,44 +219,112 @@ def draw(args)
   }
 end
 
+def get_from_action_buffer(buffer, action)
+  contains = false
+  buffer.each.with_index do |b, i|
+    if b == action
+      contains = true
+      buffer[i] = nil
+    end
+  end
+  contains
+end
+
 def simulate_player(args)
   player = args.state.player
   solids = args.state.solids
   grid = args.state.grid
 
-  player.jump_down = false
+  #get_from_action_buffer
+  player.on_ground = !actor_get_solid_below(player, solids, grid).nil?
 
-  speed_x = 0
+  if player.on_ground
+    player.action_buffer.append("ground")
+  else
+    player.action_buffer.append(nil)
+  end
+
+  if !player.on_ground
+    player.physics.const.accel = 0.04
+  end
+
   if args.inputs.keyboard.key_held.a or args.inputs.keyboard.key_held.left
-    speed_x = -0.5
+    if player.physics.speed.x > 0
+      player.physics.speed.x = 0
+    end
+    player.physics.speed.x -= player.physics.const.accel
     sprite_set_animation(args.state.player_sprite, "walking")
     args.state.player_flipped = true
   elsif args.inputs.keyboard.key_held.d or args.inputs.keyboard.key_held.right
-    speed_x = 0.5
+    if player.physics.speed.x < 0
+      player.physics.speed.x = 0
+    end
+    player.physics.speed.x += player.physics.const.accel
     sprite_set_animation(args.state.player_sprite, "walking")
     args.state.player_flipped = false
   else
+    sign = player.physics.speed.x <=> 0
+    player.physics.speed.x = player.physics.speed.x * player.physics.const.deccel
     sprite_set_animation(args.state.player_sprite, "idle")
   end
 
-  actor_move_x(player, solids, grid, speed_x)
+  if player.physics.speed.x.abs > player.physics.const.maxrun
+    sign = player.physics.speed.x <=> 0
+    player.physics.speed.x = sign * player.physics.const.maxrun
+  end
+
+  actor_move_x(player, solids, grid, player.physics.speed.x)
 
   #if args.inputs.keyboard.key_down.space and !actor_get_solid_below(player, solids, grid).nil?
   #  player.speed_y = 4
   #end
   #
-  if args.inputs.keyboard.key_down.space
-    if args.inputs.keyboard.key_held.s
-      player.speed_y = -1
-      player.jump_down = true
-    elsif !actor_get_solid_below(player, solids, grid).nil?
-      player.speed_y = 4
+
+  touch_ceiling = !actor_get_solid_above(player, solids, grid).nil?
+
+  if touch_ceiling
+    player.physics.speed.y = 0
+  end
+
+  #player.speed_y += args.state.gravity
+  local_gravity = player.physics.const.gravity
+
+  #if player.physics.speed.y <= 0.15
+  #  local_gravity *= 0.5
+  #end
+
+  if !player.on_ground
+      player.physics.speed.y -= local_gravity
+  else
+    player.physics.speed.y = 0
+  end
+
+  if player.physics.speed.y < -player.physics.const.maxfall
+    player.physics.speed.y = -player.physics.const.maxfall
+  end
+
+  if args.inputs.keyboard.key_held.space
+    jump_allowed = player.on_ground
+    if !jump_allowed
+      jump_allowed = get_from_action_buffer(player.action_buffer, "ground")
+    end
+    if jump_allowed
+      player.physics.jump_remain = player.physics.const.max_jump_remain
+      player.physics.speed.y = 2
+    elsif player.physics.jump_remain > 0
+      player.physics.speed.y *= 1.1
     end
   end
 
-  player.speed_y += args.state.gravity
+  player.physics.jump_remain -= 1
 
-  actor_move_y(player, solids, grid, player.speed_y)
+  actor_move_y(player, solids, grid, player.physics.speed.y)
+
+  i = 0
+
+  if player.action_buffer.length > 5
+    player.action_buffer.shift
+  end
 end
 
 def simulate_platforms(args)
