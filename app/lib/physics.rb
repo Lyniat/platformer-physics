@@ -81,7 +81,7 @@ def actor_move_y(actor, solids, grid, amount, ignore = nil)
   y = actor.y
 
   y_remainder += amount
-  move = y_remainder.round #changing round to floor fixes A LOT of problems (even if not sure why)
+  move = y_remainder.floor #changing round to floor fixes A LOT of problems (even if not sure why)
 
   if move == 0
     actor.y_remainder = y_remainder

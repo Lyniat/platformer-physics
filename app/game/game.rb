@@ -31,7 +31,6 @@ def init(args)
     x_remainder: 0,
     y_remainder: 0,
     is_riding: false,
-    speed_y: 0,
     jump_down: false,
     on_collision_x: :on_player_x_collision,
     on_collision_y: :on_player_y_collision
@@ -237,16 +236,13 @@ def simulate_player(args)
   solids = args.state.solids
   grid = args.state.grid
 
-  #get_from_action_buffer
-  player.on_ground = !actor_get_solid_below(player, solids, grid).nil?
-
-  if player.on_ground
+  if player.physics.was_on_ground
     player.action_buffer.append("ground")
   else
     player.action_buffer.append(nil)
   end
 
-  if !player.on_ground
+  if !player.physics.was_on_ground
     player.physics.const.accel = 0.04
   end
 
@@ -275,18 +271,13 @@ def simulate_player(args)
     player.physics.speed.x = sign * player.physics.const.maxrun
   end
 
+  player.physics.was_on_ground = false
   actor_move_x(player, solids, grid, player.physics.speed.x)
 
   #if args.inputs.keyboard.key_down.space and !actor_get_solid_below(player, solids, grid).nil?
   #  player.speed_y = 4
   #end
   #
-
-  touch_ceiling = !actor_get_solid_above(player, solids, grid).nil?
-
-  if touch_ceiling
-    player.physics.speed.y = 0
-  end
 
   #player.speed_y += args.state.gravity
   local_gravity = player.physics.const.gravity
@@ -295,7 +286,7 @@ def simulate_player(args)
   #  local_gravity *= 0.5
   #end
 
-  if !player.on_ground
+  if !player.physics.was_on_ground
       player.physics.speed.y -= local_gravity
   else
     player.physics.speed.y = 0
@@ -306,17 +297,17 @@ def simulate_player(args)
   end
 
   if args.inputs.keyboard.key_down.space
-    jump_allowed = player.on_ground
+    jump_allowed = player.physics.was_on_ground
     if !jump_allowed
       jump_allowed = get_from_action_buffer(player.action_buffer, "ground")
     end
     if jump_allowed
       player.physics.jump_remain = player.physics.const.max_jump_remain
-      player.physics.speed.y = 2
+      player.physics.speed.y = 2.1
     end
   elsif args.inputs.keyboard.key_held.space
     if player.physics.jump_remain > 0
-      player.physics.speed.y *= 1.1
+      player.physics.speed.y *= 1.12
     end
   end
 
@@ -348,18 +339,64 @@ end
 
 def on_player_y_collision(actor, solid, squish_actor)
   if solid.jump_through
-    if actor.speed_y >= 0 or actor.y < solid.y + solid.h or actor.jump_down == true
+    if actor.physics.speed.y >= 0 || actor.y < solid.y + solid.h or actor.jump_down == true
       return false
     end
   end
-  actor.speed_y = 0
+  actor.physics.speed.y = 0
+  actor.physics.was_on_ground = true
   true
+end
+
+def get_input args
+  args.state.input.key_down.jump = args.inputs.keyboard.key_down.space ||
+    args.inputs.controller_one.key_down.a ||
+    args.inputs.controller_one.key_down.y
+
+  args.state.input.key_held.jump = args.inputs.keyboard.key_held.space ||
+    args.inputs.controller_one.key_held.a ||
+    args.inputs.controller_one.key_held.y
+
+  args.state.input.key_down.dash = args.inputs.keyboard.key_down.c ||
+    args.inputs.keyboard.key_down.v ||
+    args.inputs.controller_one.key_down.b ||
+    args.inputs.controller_one.key_down.x
+
+  args.state.input.key_held.climb = args.inputs.keyboard.key_down.shift ||
+    args.inputs.controller_one.key_held.l1 ||
+    args.inputs.controller_one.key_held.l2
+
+  args.state.input.key_down.left = args.inputs.keyboard.key_down.left ||
+    args.inputs.controller_one.key_down.dpad_left
+
+  args.state.input.key_held.left = args.inputs.keyboard.key_held.left ||
+    args.inputs.controller_one.key_held.dpad_left
+
+  args.state.input.key_down.right = args.inputs.keyboard.key_down.right ||
+    args.inputs.controller_one.key_down.dpad_right
+
+  args.state.input.key_held.right = args.inputs.keyboard.key_held.right ||
+    args.inputs.controller_one.key_held.dpad_right
+
+  args.state.input.key_down.up = args.inputs.keyboard.key_down.up ||
+    args.inputs.controller_one.key_down.dpad_up
+
+  args.state.input.key_held.up = args.inputs.keyboard.key_held.up ||
+    args.inputs.controller_one.key_held.dpad_up
+
+  args.state.input.key_down.down = args.inputs.keyboard.key_down.down ||
+    args.inputs.controller_one.key_down.dpad_down
+
+  args.state.input.key_held.down = args.inputs.keyboard.key_held.down ||
+    args.inputs.controller_one.key_held.dpad_down
 end
 
 def tick args
   ticks = args.state.tick_count
 
   init(args) if ticks == 0
+
+  get_input(args)
 
   simulate_player(args)
 
@@ -405,6 +442,15 @@ def draw_debug_grid(args)
     x = (i % grid_w)
     y = (i / grid_w).floor
     next if !grid.data[i].is_solid
+    if grid.data[i].jump_through
+      r = 0
+      g = 0
+      b = 255
+    else
+      r = 255
+      g = 0
+      b = 0
+    end
     args.outputs.debug << {
       x: (x *  solid_w * args.state.camera_zoom) - cam_x * args.state.camera_zoom,
       y: (y * solid_h * args.state.camera_zoom) - cam_y * args.state.camera_zoom,
@@ -412,10 +458,10 @@ def draw_debug_grid(args)
       # y: y - cam_y * args.state.camera_zoom,
       w: solid_w * args.state.camera_zoom,
       h: solid_h  * args.state.camera_zoom,
-      r: 255,
-      g: 0,
-      b: 0,
-      a: 100,
+      r: r,
+      g: g,
+      b: b,
+      a: 70,
       primitive_marker: :solid }  
   end
 end
