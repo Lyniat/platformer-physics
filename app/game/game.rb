@@ -1,9 +1,9 @@
 def init(args)
   blocks = []
 
-  map_path = "data/ldtk/small_map/simplified/AutoLayers_advanced_demo/"
+  map_path = "data/ldtk/small_map/simplified/Small_map_platformer/"
 
-  int_blocks, int_columns, int_rows = map_get_int_layer(args, map_path + "IntGrid_layer.csv")
+  int_blocks, int_columns, int_rows = map_get_int_layer(args, map_path + "Grid_layer.csv")
 
   map_data = args.gtk.parse_json_file(map_path + "data.json")
   player_entity = map_data["entities"]["Player"][0]
@@ -14,7 +14,7 @@ def init(args)
   args.state.map_rt_sky.w = 208
   args.state.map_rt_sky.h = 120
 
-  args.state.int_bg.path = map_path + "IntGrid_layer.png"
+  args.state.int_bg.path = map_path + "Grid_layer.png"
   args.state.int_bg.w = 208
   args.state.int_bg.h = 120
 
