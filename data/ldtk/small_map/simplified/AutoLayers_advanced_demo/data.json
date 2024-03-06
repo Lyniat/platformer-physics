@@ -1,0 +1,30 @@
+{
+	"identifier": "AutoLayers_advanced_demo",
+	"uniqueIdentifer": "a2b563a0-66b0-11ec-9cd7-fd8a9b24800f",
+	"x": -1,
+	"y": -1,
+	"width": 208,
+	"height": 120,
+	"bgColor": "#1B2037",
+	"neighbourLevels": [],
+	"customFields" : {},
+	"layers": [
+		"Sky.png",
+		"IntGrid_layer.png"
+	],
+	"entities": {
+		"Player": [
+			{
+				"id": "Player",
+				"iid": "685b90b0-d7b0-11ee-9cb9-d7abfe15290e",
+				"layer": "Entities",
+				"x": 16,
+				"y": 96,
+				"width": 8,
+				"height": 8,
+				"color": 12470831,
+				"customFields" : {}
+			}
+		]
+	}
+}

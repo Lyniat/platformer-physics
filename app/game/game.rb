@@ -1,23 +1,22 @@
 def init(args)
   blocks = []
 
-  int_blocks, int_columns, int_rows = map_get_int_layer(args, "data/ldtk/sample/simplified/AutoLayers_advanced_demo/IntGrid_layer.csv")
-  #int_blocks = map_get_int_layer(map, "AutoLayers_advanced_demo", "IntGrid_layer")
+  map_path = "data/ldtk/small_map/simplified/AutoLayers_advanced_demo/"
 
-  map_data = args.gtk.parse_json_file("data/ldtk/sample/simplified/AutoLayers_advanced_demo/data.json")
+  int_blocks, int_columns, int_rows = map_get_int_layer(args, map_path + "IntGrid_layer.csv")
+
+  map_data = args.gtk.parse_json_file(map_path + "data.json")
   player_entity = map_data["entities"]["Player"][0]
   player_x = player_entity["x"]
   player_y = player_entity["y"]
 
-  #puts int_blocks
+  args.state.map_rt_sky.path = map_path + "Sky.png"
+  args.state.map_rt_sky.w = 208
+  args.state.map_rt_sky.h = 120
 
-  args.state.map_rt_sky.path = "data/ldtk/sample/simplified/AutoLayers_advanced_demo/Sky.png"
-  args.state.map_rt_sky.w = 344
-  args.state.map_rt_sky.h = 328
-
-  args.state.int_bg.path = "data/ldtk/sample/simplified/AutoLayers_advanced_demo/IntGrid_layer.png"
-  args.state.int_bg.w = 344
-  args.state.int_bg.h = 328
+  args.state.int_bg.path = map_path + "IntGrid_layer.png"
+  args.state.int_bg.w = 208
+  args.state.int_bg.h = 120
 
   block_size =  8
 
@@ -68,10 +67,10 @@ def init(args)
     x_remainder: 0,
     y_remainder: 0,
     riders: [],
-    start_x: 20,
+    start_x: block_size * 8,
     start_y: 0,
-    stop_x: 20,
-    stop_y: 50,
+    stop_x: block_size * 16,
+    stop_y: block_size * 16,
     speed: 0.01
   }
 
@@ -148,7 +147,7 @@ def init(args)
   args.state.player_flipped = false
 
   args.state.camera = :camera
-  args.state.camera_zoom = 4
+  args.state.camera_zoom = 6
   args.state.camera_settings = {x: 0, y: 0}
 
   bg_color = string_to_rgb(map_data["bgColor"])
@@ -156,18 +155,14 @@ def init(args)
 end
 
 def draw(args)
-  #args.outputs.sprites << args.state.player
-  # set camera
-
   args.outputs.background_color = args.state.bg_color
 
-  args.state.camera_settings.x = (args.state.player.x + args.state.player.w / 2) - (1280 / args.state.camera_zoom) / 2
-  args.state.camera_settings.y = (args.state.player.y + args.state.player.h / 2) - (720 / args.state.camera_zoom) / 2
+  camera_player_x = args.state.player.x + args.state.player.w / 10
+  camera_player_y = args.state.player.y + args.state.player.h / 2
 
   cam_x = args.state.camera_settings.x
   cam_y = args.state.camera_settings.y
 
-  #args.render_target(args.state.camera).sprites << args.state.solids
   args.render_target(args.state.camera).sprites << {
     path: args.state.map_rt_sky.path,
     x: -cam_x,
@@ -236,6 +231,13 @@ def simulate_player(args)
   solids = args.state.solids
   grid = args.state.grid
 
+  kd_jump = args.state.input.key_down.jump
+  kh_jump = args.state.input.key_held.jump
+  kh_up = args.state.input.key_held.up
+  kh_down = args.state.input.key_held.down
+  kh_left = args.state.input.key_held.left
+  kh_right = args.state.input.key_held.right
+
   if player.physics.was_on_ground
     player.action_buffer.append("ground")
   else
@@ -246,14 +248,14 @@ def simulate_player(args)
     player.physics.const.accel = 0.04
   end
 
-  if args.inputs.keyboard.key_held.a or args.inputs.keyboard.key_held.left
+  if kh_left
     if player.physics.speed.x > 0
       player.physics.speed.x = 0
     end
     player.physics.speed.x -= player.physics.const.accel
     sprite_set_animation(args.state.player_sprite, "walking")
     args.state.player_flipped = true
-  elsif args.inputs.keyboard.key_held.d or args.inputs.keyboard.key_held.right
+  elsif kh_right
     if player.physics.speed.x < 0
       player.physics.speed.x = 0
     end
@@ -274,17 +276,7 @@ def simulate_player(args)
   player.physics.was_on_ground = false
   actor_move_x(player, solids, grid, player.physics.speed.x)
 
-  #if args.inputs.keyboard.key_down.space and !actor_get_solid_below(player, solids, grid).nil?
-  #  player.speed_y = 4
-  #end
-  #
-
-  #player.speed_y += args.state.gravity
   local_gravity = player.physics.const.gravity
-
-  #if player.physics.speed.y <= 0.15
-  #  local_gravity *= 0.5
-  #end
 
   if !player.physics.was_on_ground
       player.physics.speed.y -= local_gravity
@@ -296,7 +288,7 @@ def simulate_player(args)
     player.physics.speed.y = -player.physics.const.maxfall
   end
 
-  if args.inputs.keyboard.key_down.space
+  if kd_jump
     jump_allowed = player.physics.was_on_ground
     if !jump_allowed
       jump_allowed = get_from_action_buffer(player.action_buffer, "ground")
@@ -305,7 +297,7 @@ def simulate_player(args)
       player.physics.jump_remain = player.physics.const.max_jump_remain
       player.physics.speed.y = 2.1
     end
-  elsif args.inputs.keyboard.key_held.space
+  elsif kh_jump
     if player.physics.jump_remain > 0
       player.physics.speed.y *= 1.12
     end
@@ -326,10 +318,11 @@ def simulate_platforms(args)
   platforms = args.state.platforms
 
   platforms.each do |platform|
-    progress = (Math.sin(args.state.tick_count * platform.speed)) / 4.0
-    x = platform.start_x * (1.0 - progress) + platform.stop_x * progress
-    y = platform.start_y * (1.0 - progress) + platform.stop_y * progress
-    solid_move(platform, args.state.actors, args.state.solids, args.state.grid, x - platform.x, progress)
+    progress_x = (Math.sin(args.state.tick_count * platform.speed)) / (platform.stop_x - platform.start_x)
+    progress_y = (Math.sin(args.state.tick_count * platform.speed)) / (platform.stop_y - platform.start_y)
+    x = platform.start_x * (1.0 - progress_x) + platform.stop_x * progress_x
+    y = platform.start_y * (1.0 - progress_y) + platform.stop_y * progress_y
+    solid_move(platform, args.state.actors, args.state.solids, args.state.grid, 1, 1)
   end
 end
 
@@ -421,13 +414,6 @@ end
 
 def draw_debug_grid(args)
   grid = args.state.grid
-  #grid.w = 14 #int_blocks.w
-  #grid.h = 14 #int_blocks.h
-  #grid.solid_w = solid_w
-  #grid.solid_h = solid_h
-  #grid.x = 0
-  #grid.y = 0
-  #grid.data = []
 
   cam_x = args.state.camera_settings.x
   cam_y = args.state.camera_settings.y
@@ -438,7 +424,6 @@ def draw_debug_grid(args)
   solid_w = grid.solid_w
   solid_h = grid.solid_h
   grid_cells.map_with_index do |i|
-    # i = x + y * grid.w # i - x = y * grid.w # -x = y * grid.w - i # x = - y * grid.w + i
     x = (i % grid_w)
     y = (i / grid_w).floor
     next if !grid.data[i].is_solid
@@ -454,8 +439,6 @@ def draw_debug_grid(args)
     args.outputs.debug << {
       x: (x *  solid_w * args.state.camera_zoom) - cam_x * args.state.camera_zoom,
       y: (y * solid_h * args.state.camera_zoom) - cam_y * args.state.camera_zoom,
-      # x: x - cam_x * args.state.camera_zoom,
-      # y: y - cam_y * args.state.camera_zoom,
       w: solid_w * args.state.camera_zoom,
       h: solid_h  * args.state.camera_zoom,
       r: r,
