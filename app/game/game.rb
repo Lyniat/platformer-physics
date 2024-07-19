@@ -7,8 +7,11 @@ def init(args)
 
   map_data = args.gtk.parse_json_file(map_path + "data.json")
   player_entity = map_data["entities"]["Player"][0]
-  player_x = player_entity["x"]
-  player_y = player_entity["y"]
+  args.state.player_start = {}
+  args.state.player_start.x = player_entity["x"]
+  args.state.player_start.y = player_entity["y"]
+  player_x = args.state.player_start.x
+  player_y = args.state.player_start.y
 
   args.state.map_rt_sky.path = map_path + "Sky.png"
   args.state.map_rt_sky.w = 208
@@ -59,7 +62,7 @@ def init(args)
   args.state.gravity = -8 / 60
 
   platform_a = {
-    x: 20,
+    x: block_size * 8,
     y: 0,
     w: block_size * 2,
     h: block_size,
@@ -67,7 +70,7 @@ def init(args)
     x_remainder: 0,
     y_remainder: 0,
     riders: [],
-    start_x: block_size * 8,
+    start_x: block_size * 16,
     start_y: 0,
     stop_x: block_size * 16,
     stop_y: block_size * 16,
@@ -226,6 +229,11 @@ def get_from_action_buffer(buffer, action)
   contains
 end
 
+def reset_player(args)
+  args.state.player.x = args.state.player_start.x
+  args.state.player.y = args.state.player_start.y
+end
+
 def simulate_player(args)
   player = args.state.player
   solids = args.state.solids
@@ -312,6 +320,10 @@ def simulate_player(args)
   if player.action_buffer.length > 5
     player.action_buffer.shift
   end
+
+  if player.y < -10
+    reset_player(args)
+  end
 end
 
 def simulate_platforms(args)
@@ -321,8 +333,8 @@ def simulate_platforms(args)
     progress_x = (Math.sin(args.state.tick_count * platform.speed)) / (platform.stop_x - platform.start_x)
     progress_y = (Math.sin(args.state.tick_count * platform.speed)) / (platform.stop_y - platform.start_y)
     x = platform.start_x * (1.0 - progress_x) + platform.stop_x * progress_x
-    y = platform.start_y * (1.0 - progress_y) + platform.stop_y * progress_y
-    solid_move(platform, args.state.actors, args.state.solids, args.state.grid, 1, 1)
+    y = platform.start_y * (1.0 - progress_y) + platform.stop_y * progress_y * 0.5
+    solid_move(platform, args.state.actors, args.state.solids, args.state.grid, 0, y)
   end
 end
 
