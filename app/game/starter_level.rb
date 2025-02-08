@@ -46,20 +46,20 @@ def tick args
     args.state.input_mode = :keyboard
   end
 
-  @show_debug = !@show_debug if args.state.active_input.key_down?(control_mapping[:debug][args.state.input_mode])
-  @paused = !@paused if args.state.active_input.key_down?(control_mapping[:pause][args.state.input_mode])
+  @show_debug = !@show_debug if args.state.active_input.key_down?(control_mapping[:debug])
+  @paused = !@paused if args.state.active_input.key_down?(control_mapping[:pause])
   Level.instance.debug(@show_debug)
   Level.instance.pause(@paused)
 
   unless @paused
-    @player.move_left if args.state.active_input.key_held?(control_mapping[:left][args.state.input_mode])
-    @player.move_right if args.state.active_input.key_held?(control_mapping[:right][args.state.input_mode])
-    @player.climb if args.state.active_input.key_held?(control_mapping[:climb][args.state.input_mode])
-    @player.move_up if args.state.active_input.key_held?(control_mapping[:up][args.state.input_mode])
-    @player.move_down if args.state.active_input.key_held?(control_mapping[:down][args.state.input_mode])
-    if args.state.active_input.key_down_or_held?(control_mapping[:jump][args.state.input_mode])
-      @player.jump if args.state.active_input.key_down?(control_mapping[:jump][args.state.input_mode])
-      @player.jump_accelerate if args.state.active_input.key_held?(control_mapping[:jump][args.state.input_mode])
+    @player.move_left if args.state.active_input.key_held?(control_mapping[:left])
+    @player.move_right if args.state.active_input.key_held?(control_mapping[:right])
+    @player.climb if args.state.active_input.key_held?(control_mapping[:climb])
+    @player.move_up if args.state.active_input.key_held?(control_mapping[:up])
+    @player.move_down if args.state.active_input.key_held?(control_mapping[:down])
+    if args.state.active_input.key_down_or_held?(control_mapping[:jump])
+      @player.jump if args.state.active_input.key_down?(control_mapping[:jump])
+      @player.jump_accelerate if args.state.active_input.key_held?(control_mapping[:jump])
     end
     @player.fire(@camera.mouse_x, @camera.mouse_y) if args.inputs.mouse.click
   end
@@ -104,39 +104,27 @@ end
 
 def control_mapping
   {
-    jump: {
-      keyboard: :space,
-      controller: :a,
+    keyboard: {
+      jump: :space,
+      left: :a,
+      right: :d,
+      up: :w,
+      down: :s,
+      climb: :shift_left,
+      pause: :backspace,
+      debug: :escape,
     },
-    left: {
-      keyboard: :a,
-      controller: :left
-    },
-    right: {
-      keyboard: :d,
-      controller: :right,
-    },
-    up: {
-      keyboard: :w,
-      controller: :up,
-    },
-    down: {
-      keyboard: :s,
-      controller: :down,
-    },
-    climb: {
-      keyboard: :shift_left,
-      controller: :r1,
-    },
-    pause: {
-      keyboard: :backspace,
-      controller: :start,
-    },
-    debug: {
-      keyboard: :escape,
-      controller: :select,
+    controller: {
+      jump: :a,
+      left: :left,
+      right: :right,
+      up: :up,
+      down: :down,
+      climb: :r1,
+      pause: :start,
+      debug: :select,
     }
-  }
+  }[$args.state.input_mode]
 end
 
 def reset args
