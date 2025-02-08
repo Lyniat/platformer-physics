@@ -6,7 +6,6 @@ CANVAS_HEIGHT = 720 / 8
 MAP_SCALE = 1
 
 def init args
-  $gtk.enable_controller_config
   init_objects
   map_loader = MapLoader.new(54, 35, TILE_SIZE, "/sprites/tiles.png", 24, 21, "/data/map.csv", "/data/tiles.json", MAP_SCALE)
   @map = map_loader.map
