@@ -46,7 +46,7 @@ def tick args
     args.state.input_mode = :keyboard
   end
 
-  @show_debug = !@show_debug if args.inputs.keyboard.key_down.escape
+  @show_debug = !@show_debug if args.state.active_input.key_down?(control_mapping[:debug][args.state.input_mode])
   @paused = !@paused if args.state.active_input.key_down?(control_mapping[:pause][args.state.input_mode])
   Level.instance.debug(@show_debug)
   Level.instance.pause(@paused)
@@ -85,7 +85,7 @@ def tick args
     args.outputs.labels << [0, HEIGHT - 20, "jump: A", 0, 0, 255, 0, 0]
     args.outputs.labels << [0, HEIGHT - 40, "climb: R1", 0, 0, 255, 0, 0]
     args.outputs.labels << [0, HEIGHT - 60, "fire: MOUSE", 0, 0, 255, 0, 0]
-    args.outputs.labels << [0, HEIGHT - 80, "debug: ???", 0, 0, 255, 0, 0]
+    args.outputs.labels << [0, HEIGHT - 80, "debug: SELECT", 0, 0, 255, 0, 0]
     args.outputs.labels << [0, HEIGHT - 100, "pause: START", 0, 0, 255, 0, 0]
   end
 
@@ -129,8 +129,12 @@ def control_mapping
       controller: :r1,
     },
     pause: {
-      keyboard: :escape,
+      keyboard: :backspace,
       controller: :start,
+    },
+    debug: {
+      keyboard: :escape,
+      controller: :select,
     }
   }
 end
