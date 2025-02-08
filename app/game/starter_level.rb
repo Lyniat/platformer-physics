@@ -47,7 +47,7 @@ def tick args
   end
 
   @show_debug = !@show_debug if args.inputs.keyboard.key_down.escape
-  @paused = !@paused if args.inputs.keyboard.key_down.backspace
+  @paused = !@paused if args.state.active_input.key_down.send(control_mapping[:pause][args.state.input_mode])
   Level.instance.debug(@show_debug)
   Level.instance.pause(@paused)
 
@@ -72,12 +72,24 @@ def tick args
     @resetting = true
   end
 
-  args.outputs.labels << [0, HEIGHT, "move: W, A, S, D", 0, 0, 255, 0, 0]
-  args.outputs.labels << [0, HEIGHT - 20, "jump: SPACE", 0, 0, 255, 0, 0]
-  args.outputs.labels << [0, HEIGHT - 40, "climb: SHIFT", 0, 0, 255, 0, 0]
-  args.outputs.labels << [0, HEIGHT - 60, "fire: MOUSE", 0, 0, 255, 0, 0]
-  args.outputs.labels << [0, HEIGHT - 80, "debug: ESCAPE", 0, 0, 255, 0, 0]
-  args.outputs.labels << [0, HEIGHT - 100, "pause: BACKSPACE", 0, 0, 255, 0, 0]
+  case args.state.input_mode
+  when :keyboard
+    args.outputs.labels << [0, HEIGHT, "move: W, A, S, D", 0, 0, 255, 0, 0]
+    args.outputs.labels << [0, HEIGHT - 20, "jump: SPACE", 0, 0, 255, 0, 0]
+    args.outputs.labels << [0, HEIGHT - 40, "climb: SHIFT", 0, 0, 255, 0, 0]
+    args.outputs.labels << [0, HEIGHT - 60, "fire: MOUSE", 0, 0, 255, 0, 0]
+    args.outputs.labels << [0, HEIGHT - 80, "debug: ESCAPE", 0, 0, 255, 0, 0]
+    args.outputs.labels << [0, HEIGHT - 100, "pause: BACKSPACE", 0, 0, 255, 0, 0]
+  when :controller
+    args.outputs.labels << [0, HEIGHT, "move: d-pad or sticks", 0, 0, 255, 0, 0]
+    args.outputs.labels << [0, HEIGHT - 20, "jump: A", 0, 0, 255, 0, 0]
+    args.outputs.labels << [0, HEIGHT - 40, "climb: R1", 0, 0, 255, 0, 0]
+    args.outputs.labels << [0, HEIGHT - 60, "fire: MOUSE", 0, 0, 255, 0, 0]
+    args.outputs.labels << [0, HEIGHT - 80, "debug: ???", 0, 0, 255, 0, 0]
+    args.outputs.labels << [0, HEIGHT - 100, "pause: START", 0, 0, 255, 0, 0]
+  end
+
+
 
   args.outputs.labels << [0, HEIGHT - 300, "actors: #{Level.instance.actors.length}", 0, 0, 0, 0, 255]
   args.outputs.labels << [0, HEIGHT - 320, "solids: #{Level.instance.solids.length}", 0, 0, 0, 0, 255]
@@ -115,6 +127,10 @@ def control_mapping
     climb: {
       keyboard: :shift_left,
       controller: :r1,
+    },
+    pause: {
+      keyboard: :escape,
+      controller: :start,
     }
   }
 end
