@@ -6,6 +6,7 @@ CANVAS_HEIGHT = 720 / 8
 MAP_SCALE = 1
 
 def init args
+  $gtk.enable_controller_config
   init_objects
   map_loader = MapLoader.new(54, 35, TILE_SIZE, "/sprites/tiles.png", 24, 21, "/data/map.csv", "/data/tiles.json", MAP_SCALE)
   @map = map_loader.map
@@ -38,6 +39,13 @@ end
 def tick args
   $args = args
   init(args) if args.state.tick_count == 0
+  if args.inputs.last_active == :controller
+    args.state.active_input = args.inputs.controller_one
+    args.state.input_mode = :controller
+  elsif args.inputs.last_active == :keyboard
+    args.state.active_input = args.inputs.keyboard
+    args.state.input_mode = :keyboard
+  end
 
   @show_debug = !@show_debug if args.inputs.keyboard.key_down.escape
   @paused = !@paused if args.inputs.keyboard.key_down.backspace
@@ -45,13 +53,15 @@ def tick args
   Level.instance.pause(@paused)
 
   unless @paused
-    @player.move_left if args.inputs.keyboard.key_held.a
-    @player.move_right if args.inputs.keyboard.key_held.d
-    @player.climb if args.inputs.keyboard.key_held.shift_left
-    @player.move_up if args.inputs.keyboard.key_held.w
-    @player.move_down if args.inputs.keyboard.key_held.s
-    @player.jump if args.inputs.keyboard.key_down.space
-    @player.jump_accelerate if args.inputs.keyboard.key_held.space
+    @player.move_left if args.state.active_input.key_held.send(control_mapping[:left][args.state.input_mode])
+    @player.move_right if args.state.active_input.key_held.send(control_mapping[:right][args.state.input_mode])
+    @player.climb if args.state.active_input.key_held.send(control_mapping[:climb][args.state.input_mode])
+    @player.move_up if args.state.active_input.key_held.send(control_mapping[:up][args.state.input_mode])
+    @player.move_down if args.state.active_input.key_held.send(control_mapping[:down][args.state.input_mode])
+    if args.state.active_input.send(control_mapping[:jump][args.state.input_mode])
+      @player.jump if args.state.active_input.key_down.send(control_mapping[:jump][args.state.input_mode])
+      @player.jump_accelerate if args.state.active_input.key_held.send(control_mapping[:jump][args.state.input_mode])
+    end
     @player.fire(@camera.mouse_x, @camera.mouse_y) if args.inputs.mouse.click
   end
 
@@ -79,6 +89,35 @@ def tick args
 
   sin_paused_label = Math.sin(args.state.tick_count / 30) * 20
   args.outputs.labels << [WIDTH / 2, HEIGHT / 2 + sin_paused_label, "GAME PAUSED", 15, 1, 255, 255, 0] if @paused
+end
+
+def control_mapping
+  {
+    jump: {
+      keyboard: :space,
+      controller: :a,
+    },
+    left: {
+      keyboard: :a,
+      controller: :left
+    },
+    right: {
+      keyboard: :d,
+      controller: :right,
+    },
+    up: {
+      keyboard: :w,
+      controller: :up,
+    },
+    down: {
+      keyboard: :s,
+      controller: :down,
+    },
+    climb: {
+      keyboard: :shift_left,
+      controller: :r1,
+    }
+  }
 end
 
 def reset args
