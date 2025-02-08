@@ -47,19 +47,19 @@ def tick args
   end
 
   @show_debug = !@show_debug if args.inputs.keyboard.key_down.escape
-  @paused = !@paused if args.state.active_input.key_down.send(control_mapping[:pause][args.state.input_mode])
+  @paused = !@paused if args.state.active_input.key_down?(control_mapping[:pause][args.state.input_mode])
   Level.instance.debug(@show_debug)
   Level.instance.pause(@paused)
 
   unless @paused
-    @player.move_left if args.state.active_input.key_held.send(control_mapping[:left][args.state.input_mode])
-    @player.move_right if args.state.active_input.key_held.send(control_mapping[:right][args.state.input_mode])
-    @player.climb if args.state.active_input.key_held.send(control_mapping[:climb][args.state.input_mode])
-    @player.move_up if args.state.active_input.key_held.send(control_mapping[:up][args.state.input_mode])
-    @player.move_down if args.state.active_input.key_held.send(control_mapping[:down][args.state.input_mode])
-    if args.state.active_input.send(control_mapping[:jump][args.state.input_mode])
-      @player.jump if args.state.active_input.key_down.send(control_mapping[:jump][args.state.input_mode])
-      @player.jump_accelerate if args.state.active_input.key_held.send(control_mapping[:jump][args.state.input_mode])
+    @player.move_left if args.state.active_input.key_held?(control_mapping[:left][args.state.input_mode])
+    @player.move_right if args.state.active_input.key_held?(control_mapping[:right][args.state.input_mode])
+    @player.climb if args.state.active_input.key_held?(control_mapping[:climb][args.state.input_mode])
+    @player.move_up if args.state.active_input.key_held?(control_mapping[:up][args.state.input_mode])
+    @player.move_down if args.state.active_input.key_held?(control_mapping[:down][args.state.input_mode])
+    if args.state.active_input.key_down_or_held?(control_mapping[:jump][args.state.input_mode])
+      @player.jump if args.state.active_input.key_down?(control_mapping[:jump][args.state.input_mode])
+      @player.jump_accelerate if args.state.active_input.key_held?(control_mapping[:jump][args.state.input_mode])
     end
     @player.fire(@camera.mouse_x, @camera.mouse_y) if args.inputs.mouse.click
   end
