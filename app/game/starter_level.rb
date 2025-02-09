@@ -38,20 +38,29 @@ end
 def tick args
   $args = args
   init(args) if args.state.tick_count == 0
+  if args.inputs.last_active == :controller
+    args.state.active_input = args.inputs.controller_one
+    args.state.input_mode = :controller
+  elsif args.inputs.last_active == :keyboard
+    args.state.active_input = args.inputs.keyboard
+    args.state.input_mode = :keyboard
+  end
 
-  @show_debug = !@show_debug if args.inputs.keyboard.key_down.escape
-  @paused = !@paused if args.inputs.keyboard.key_down.backspace
+  @show_debug = !@show_debug if args.state.active_input.key_down?(control_mapping[:debug])
+  @paused = !@paused if args.state.active_input.key_down?(control_mapping[:pause])
   Level.instance.debug(@show_debug)
   Level.instance.pause(@paused)
 
   unless @paused
-    @player.move_left if args.inputs.keyboard.key_held.a
-    @player.move_right if args.inputs.keyboard.key_held.d
-    @player.climb if args.inputs.keyboard.key_held.shift_left
-    @player.move_up if args.inputs.keyboard.key_held.w
-    @player.move_down if args.inputs.keyboard.key_held.s
-    @player.jump if args.inputs.keyboard.key_down.space
-    @player.jump_accelerate if args.inputs.keyboard.key_held.space
+    @player.move_left if args.state.active_input.key_held?(control_mapping[:left])
+    @player.move_right if args.state.active_input.key_held?(control_mapping[:right])
+    @player.climb if args.state.active_input.key_held?(control_mapping[:climb])
+    @player.move_up if args.state.active_input.key_held?(control_mapping[:up])
+    @player.move_down if args.state.active_input.key_held?(control_mapping[:down])
+    if args.state.active_input.key_down_or_held?(control_mapping[:jump])
+      @player.jump if args.state.active_input.key_down?(control_mapping[:jump])
+      @player.jump_accelerate if args.state.active_input.key_held?(control_mapping[:jump])
+    end
     @player.fire(@camera.mouse_x, @camera.mouse_y) if args.inputs.mouse.click
   end
 
@@ -63,12 +72,24 @@ def tick args
     @resetting = true
   end
 
-  args.outputs.labels << [0, HEIGHT, "move: W, A, S, D", 0, 0, 255, 0, 0]
-  args.outputs.labels << [0, HEIGHT - 20, "jump: SPACE", 0, 0, 255, 0, 0]
-  args.outputs.labels << [0, HEIGHT - 40, "climb: SHIFT", 0, 0, 255, 0, 0]
-  args.outputs.labels << [0, HEIGHT - 60, "fire: MOUSE", 0, 0, 255, 0, 0]
-  args.outputs.labels << [0, HEIGHT - 80, "debug: ESCAPE", 0, 0, 255, 0, 0]
-  args.outputs.labels << [0, HEIGHT - 100, "pause: BACKSPACE", 0, 0, 255, 0, 0]
+  case args.state.input_mode
+  when :keyboard
+    args.outputs.labels << [0, HEIGHT, "move: W, A, S, D", 0, 0, 255, 0, 0]
+    args.outputs.labels << [0, HEIGHT - 20, "jump: SPACE", 0, 0, 255, 0, 0]
+    args.outputs.labels << [0, HEIGHT - 40, "climb: SHIFT", 0, 0, 255, 0, 0]
+    args.outputs.labels << [0, HEIGHT - 60, "fire: MOUSE", 0, 0, 255, 0, 0]
+    args.outputs.labels << [0, HEIGHT - 80, "debug: ESCAPE", 0, 0, 255, 0, 0]
+    args.outputs.labels << [0, HEIGHT - 100, "pause: BACKSPACE", 0, 0, 255, 0, 0]
+  when :controller
+    args.outputs.labels << [0, HEIGHT, "move: d-pad or sticks", 0, 0, 255, 0, 0]
+    args.outputs.labels << [0, HEIGHT - 20, "jump: A", 0, 0, 255, 0, 0]
+    args.outputs.labels << [0, HEIGHT - 40, "climb: R1", 0, 0, 255, 0, 0]
+    args.outputs.labels << [0, HEIGHT - 60, "fire: MOUSE", 0, 0, 255, 0, 0]
+    args.outputs.labels << [0, HEIGHT - 80, "debug: SELECT", 0, 0, 255, 0, 0]
+    args.outputs.labels << [0, HEIGHT - 100, "pause: START", 0, 0, 255, 0, 0]
+  end
+
+
 
   args.outputs.labels << [0, HEIGHT - 300, "actors: #{Level.instance.actors.length}", 0, 0, 0, 0, 255]
   args.outputs.labels << [0, HEIGHT - 320, "solids: #{Level.instance.solids.length}", 0, 0, 0, 0, 255]
@@ -79,6 +100,31 @@ def tick args
 
   sin_paused_label = Math.sin(args.state.tick_count / 30) * 20
   args.outputs.labels << [WIDTH / 2, HEIGHT / 2 + sin_paused_label, "GAME PAUSED", 15, 1, 255, 255, 0] if @paused
+end
+
+def control_mapping
+  {
+    keyboard: {
+      jump: :space,
+      left: :a,
+      right: :d,
+      up: :w,
+      down: :s,
+      climb: :shift_left,
+      pause: :backspace,
+      debug: :escape,
+    },
+    controller: {
+      jump: :a,
+      left: :left,
+      right: :right,
+      up: :up,
+      down: :down,
+      climb: :r1,
+      pause: :start,
+      debug: :select,
+    }
+  }[$args.state.input_mode]
 end
 
 def reset args
